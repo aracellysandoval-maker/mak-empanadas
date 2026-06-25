@@ -85,7 +85,7 @@
     .specials-cards { display: flex; justify-content: center; flex-wrap: wrap; gap: 25px; }
     .special-pill { background: var(--white); padding: 25px 35px; border-radius: 15px; box-shadow: 0 4px 12px var(--shadow); text-align: center; font-weight: 600; font-size: 1rem; }
 
-    /* Catálogo y Destacados */
+    /* Catálogo */
     .section-title { font-size: 2.2rem; text-align: center; margin-bottom: 35px; position: relative; padding-bottom: 12px; }
     .section-title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 50px; height: 3px; background: var(--rose-gold); }
     
@@ -109,13 +109,12 @@
     
     .card-info { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
     .card-info h3 { font-size: 1.25rem; margin-bottom: 6px; color: var(--text-dark); }
-    .card-info .desc { display: none; } /* REQUISITO EXPLICITO: No agregar información extra ni descripción en tarjetas */
     
     .format-selector { margin-bottom: 12px; }
     .format-selector label { display: block; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: #888; margin-bottom: 4px; }
     .format-selector select { width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--rosado-pastel); font-family: inherit; font-size: 0.85rem; background: var(--white); outline: none; }
     
-    /* Configuración de Selección Obligatoria para Empanadas */
+    /* Configuración Especial Empanadas */
     .special-box { background: var(--celeste-pastel); padding: 12px; border-radius: 10px; margin-bottom: 12px; }
     .special-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 6px; color: var(--rose-gold-dark); display: block; }
     .radio-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
@@ -142,7 +141,7 @@
     .sticky-cart-trigger { position: fixed; bottom: 25px; right: 25px; background: var(--rose-gold-dark); color: white; padding: 12px 24px; border-radius: 25px; border: none; font-family: inherit; font-weight: 600; font-size: 0.95rem; box-shadow: 0 4px 15px rgba(0,0,0,0.15); cursor: pointer; z-index: 99; display: flex; align-items: center; gap: 8px; }
     .cart-indicator { background: white; color: var(--rose-gold-dark); font-size: 0.75rem; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
 
-    /* Desplegable Carrito de Compras */
+    /* Carrito */
     .panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 150; opacity: 0; pointer-events: none; transition: var(--transition); backdrop-filter: blur(2px); }
     .panel-overlay.active { opacity: 1; pointer-events: all; }
     .panel-container { position: fixed; top: 0; right: -460px; bottom: 0; width: 100%; max-width: 440px; background: var(--white); z-index: 160; box-shadow: -4px 0 20px rgba(0,0,0,0.1); transition: var(--transition); display: flex; flex-direction: column; }
@@ -154,7 +153,7 @@
     .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--beige); font-size: 0.85rem; }
     .cart-item-remove { font-size: 0.75rem; color: #c94c4c; cursor: pointer; background: none; border: none; margin-top: 4px; text-decoration: underline; }
 
-    /* Formulario Checkout */
+    /* Checkout */
     .checkout-form { margin-top: 20px; background: var(--beige); padding: 15px; border-radius: 12px; }
     .checkout-form h4 { margin-bottom: 12px; font-size: 1rem; border-bottom: 1px solid var(--rosado-pastel); padding-bottom: 4px; }
     .input-group { margin-bottom: 10px; }
@@ -167,7 +166,7 @@
     .summary-row.total { font-size: 1rem; font-weight: 700; color: var(--rose-gold-dark); border-top: 1px dashed var(--rose-gold); padding-top: 6px; }
     .panel-footer { padding: 20px; border-top: 1px solid var(--beige); }
 
-    /* --- VISTA ADMINISTRADOR (CON MÚLTIPLES OPCIONES DE MANEJO VISUAL) --- */
+    /* --- VISTA ADMINISTRADOR --- */
     #adminView { display: none; background: #F3F4F6; min-height: 100vh; padding-bottom: 60px; }
     .admin-nav { background: var(--text-dark); color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
     .admin-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 30px; max-width: 1300px; margin: 30px auto; padding: 0 20px; }
@@ -180,8 +179,6 @@
     .btn-admin:hover { background: var(--rose-gold-dark); }
     .btn-admin.success { background: #10B981; }
     .btn-admin.success:hover { background: #059669; }
-    .btn-admin.danger { background: #EF4444; }
-    .btn-admin.danger:hover { background: #DC2626; }
     
     .price-row-item { background: #F9FAFB; padding: 8px; border-radius: 6px; border: 1px solid #E5E7EB; margin-bottom: 6px; }
     .admin-item-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #F9FAFB; border: 1px solid #E5E7EB; margin-bottom: 10px; border-radius: 8px; font-size: 0.85rem; }
@@ -194,7 +191,7 @@
     <header>
       <div class="nav-wrapper">
         <div class="logo-area">
-          <div class="admin-trigger" ondblclick="handleAdminAccess()" title="Doble clic para ir al Panel de Control">🥟</div>
+          <div class="admin-trigger" ondblclick="handleAdminAccess()" title="Doble clic para entrar al Panel">🥟</div>
           <img src="" id="uiBrandLogo" class="brand-logo-img" alt="Logo">
           <div class="brand-text">
             <h1 id="uiStoreName">Mak Empanadas</h1>
@@ -218,7 +215,6 @@
         <p id="uiHeroSub">Canapés, empanadas fritas, sándwiches, completos, dulces y mucho más para reuniones, cumpleaños y celebraciones.</p>
         <div class="hero-buttons">
           <a href="#catalogo" class="btn-premium">Ver Catálogo</a>
-          <a href="#catalogo" class="btn-premium" style="background: var(--text-dark);">Realizar Pedido</a>
         </div>
       </div>
     </section>
@@ -238,7 +234,7 @@
     <section class="specials-sec" id="nosotros">
       <div class="container">
         <h3>Opciones para todos los gustos</h3>
-        <p class="specials-p">Además de nuestras preparaciones tradicionales, contamos con opciones vegetarianas y veganas para que todos puedan disfrutar de una experiencia deliciosa y de calidad.</p>
+        <p class="specials-p">Contamos con opciones vegetarianas y veganas para que todos puedan disfrutar de una experiencia deliciosa.</p>
         <div class="specials-cards">
           <div class="special-pill">🥬 Opciones Vegetarianas</div>
           <div class="special-pill">🌱 Opciones Veganas</div>
@@ -274,13 +270,16 @@
     <footer id="contacto">
       <div class="container">
         <h4 id="uiFooterName">Mak Empanadas</h4>
-        <p>Elaborando productos caseros para celebraciones, cumpleaños, reuniones familiares y ocasiones especiales con más de 3 años de experiencia.</p>
+        <p>Elaborando productos caseros con más de 3 años de experiencia.</p>
         <p style="margin-top: 15px; font-weight: 500; color: var(--rose-gold);">Punta Arenas, Chile</p>
+        
+        <button onclick="handleAdminAccess()" style="margin-top: 25px; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.5); padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;">
+          🔐 Entrar al Panel de Control (Administrador)
+        </button>
       </div>
     </footer>
 
     <a href="https://wa.me/56989653397" class="btn-float-wa" target="_blank" rel="noopener">💬</a>
-    
     <button class="sticky-cart-trigger" onclick="toggleCartPanel(true)">
       🛒 Carrito <span class="cart-indicator" id="cartBadge">0</span>
     </button>
@@ -376,7 +375,6 @@
         <button class="btn-admin success" onclick="updateIdentityTexts()">Guardar Cambios de Identidad</button>
 
         <h3 style="margin-top:35px;">Manejo de Fechas Clausuradas</h3>
-        <p style="font-size:0.75rem; color:#666; margin-bottom:10px;">Bloquea días específicos del calendario para que ningún cliente pueda generar pedidos en esas fechas.</p>
         <div class="input-group">
           <label>Fecha a Clausurar</label>
           <input type="date" id="admBlockDate">
@@ -420,18 +418,18 @@
           </div>
 
           <div class="input-group">
-            <label>Imagen del Producto (Subir archivo a Supabase Storage)</label>
-            <input type="file" id="formProdFile" accept="image/*">
-            <input type="hidden" id="formProdImgUrl">
+            <label>URL de la Imagen del Producto (Pon un enlace o súbela)</label>
+            <input type="text" id="formProdImgUrl" placeholder="https://ejemplo.com/imagen.jpg">
+            <input type="file" id="formProdFile" accept="image/*" style="margin-top:8px;">
           </div>
 
           <div style="display:flex; gap:20px; margin: 15px 0; font-size: 0.85rem; background: #FFF5F5; padding: 10px; border-radius: 6px;">
             <label style="cursor:pointer;"><input type="checkbox" id="formProdFeatured"> ¿Aparece en Favoritos?</label>
-            <label style="cursor:pointer;"><input type="checkbox" id="formProdBadge"> ¿Lleva insignia "Más vendido"?</label>
+            <label style="cursor:pointer;"><input type="checkbox" id="formProdBadge"> ¿Insignia "Más vendido"?</label>
           </div>
 
           <button type="submit" class="btn-admin success">Guardar Cambios Permanentemente</button>
-          <button type="button" class="btn-admin" style="background:#9CA3AF; margin-top:8px;" onclick="clearProductForm()">Limpiar Campos / Cancelar</button>
+          <button type="button" class="btn-admin" style="background:#9CA3AF; margin-top:8px;" onclick="clearProductForm()">Limpiar / Cancelar</button>
         </form>
 
         <h3 style="margin-top:35px;">Lista de Productos Activos en Catálogo</h3>
@@ -441,21 +439,22 @@
   </div>
 
   <script>
-    // Configuración obligatoria de las APIs de conexión
-    const SUPABASE_URL = "https://your-supabase-url.supabase.co"; 
-    const SUPABASE_ANON_KEY = "your-anon-key";
+    // Configuración de las APIs. Si están vacías, corre de manera Local de inmediato.
+    const SUPABASE_URL = ""; 
+    const SUPABASE_ANON_KEY = "";
     
     const EMAILJS_PUBLIC_KEY = "YOUR_EMAILJS_PUBLIC_KEY";
     const EMAILJS_SERVICE_ID = "YOUR_EMAILJS_SERVICE_ID";
     const EMAILJS_TEMPLATE_ID = "YOUR_EMAILJS_TEMPLATE_ID";
 
-    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+    // Detecta si hay credenciales reales para iniciar Supabase
+    const useSupabase = (SUPABASE_URL !== "" && SUPABASE_ANON_KEY !== "");
+    const supabaseClient = useSupabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
     if(window.emailjs && EMAILJS_PUBLIC_KEY !== "YOUR_EMAILJS_PUBLIC_KEY") {
       emailjs.init(EMAILJS_PUBLIC_KEY);
     }
 
-    // Estado unificado en tiempo real de la aplicación
     let appState = {
       config: {
         logoUrl: "",
@@ -469,23 +468,12 @@
       activeCategory: "Todos"
     };
 
-    // Estructura limpia y exacta de productos solicitados sin descripciones extras
     const defaultCatalogData = [
-      { name: "CANAPÉS MIXTOS", category: "Canapés", price: {"50": 25000, "100": 45000}, is_special: false, is_featured: false },
-      { name: "ALFAJORES DE MAICENA", category: "Dulces", price: {"40": 16000}, is_special: false, is_featured: false },
-      { name: "CALZONES ROTOS", category: "Dulces", price: {"40": 12000}, is_special: false, is_featured: false },
-      { name: "CALZONES ROTOS BAÑADOS", category: "Dulces", price: {"40": 16000}, is_special: false, is_featured: false },
-      { name: "CHACAREROS", category: "Sándwiches", price: {"25": 20000, "50": 33000, "100": 55000}, is_special: false, is_featured: true, badge: "Más vendido" },
-      { name: "BARROS LUCO", category: "Sándwiches", price: {"25": 20000, "50": 33000, "100": 55000}, is_special: false, is_featured: false },
-      { name: "AVE PALTA MAYO", category: "Sándwiches", price: {"25": 20000, "50": 33000, "100": 55000}, is_special: false, is_featured: false },
-      { name: "TOCINO", category: "Sándwiches", price: {"25": 25000, "50": 40000, "100": 70000}, is_special: false, is_featured: false },
-      { name: "HAMBURGUESA CHEDDAR", category: "Sándwiches", price: {"25": 25000, "50": 40000, "100": 70000}, is_special: false, is_featured: false },
-      { name: "HAMBURGUESA", category: "Sándwiches", price: {"25": 25000, "50": 40000, "100": 70000}, is_special: false, is_featured: false },
-      { name: "VEGETARIANO", category: "Sándwiches", price: {"25": 20000, "50": 33000, "100": 55000}, is_special: false, is_featured: false },
-      { name: "COMPLETOS", category: "Completos", price: {"25": 23000, "50": 40000}, is_special: false, is_featured: true, badge: "Más vendido" },
-      { name: "BANDEJA MIXTA", category: "Bandejas Mixtas", price: {"1": 15000}, is_special: false, is_featured: false },
-      { name: "SOPAIPILLAS", category: "Sopaipillas", price: {"25": 12000}, is_special: false, is_featured: false },
-      { name: "EMPANADAS FRITAS", category: "Empanadas", price: {"25_congeladas": 9000, "50_unidades": 20000, "100_unidades": 40000, "50_camaron": 23000, "100_camaron": 45000}, is_special: true, is_featured: true, badge: "Más vendido" }
+      { id: "1", name: "CANAPÉS MIXTOS", category: "Canapés", price: {"50": 25000, "100": 45000}, is_special: false, is_featured: false },
+      { id: "2", name: "ALFAJORES DE MAICENA", category: "Dulces", price: {"40": 16000}, is_special: false, is_featured: false },
+      { id: "3", name: "CHACAREROS", category: "Sándwiches", price: {"25": 20000, "50": 33000, "100": 55000}, is_special: false, is_featured: true, badge: "Más vendido" },
+      { id: "4", name: "COMPLETOS", category: "Completos", price: {"25": 23000, "50": 40000}, is_special: false, is_featured: true, badge: "Más vendido" },
+      { id: "5", name: "EMPANADAS FRITAS", category: "Empanadas", price: {"25_congeladas": 9000, "50_unidades": 20000, "100_unidades": 40000, "50_camaron": 23000, "100_camaron": 45000}, is_special: true, is_featured: true, badge: "Más vendido" }
     ];
 
     window.addEventListener('DOMContentLoaded', async () => {
@@ -493,10 +481,15 @@
       document.getElementById('chkDate').min = today;
       document.getElementById('admBlockDate').min = today;
 
-      if (supabaseClient) {
-        await syncDataWithSupabase();
+      // Cargar desde LocalStorage si no se usa base de datos remota
+      if (!useSupabase) {
+        const savedConfig = localStorage.getItem('mak_config');
+        const savedProducts = localStorage.getItem('mak_products');
+        
+        appState.config = savedConfig ? JSON.parse(savedConfig) : appState.config;
+        appState.products = savedProducts ? JSON.parse(savedProducts) : defaultCatalogData;
       } else {
-        appState.products = defaultCatalogData;
+        await syncDataWithSupabase();
       }
       renderClientDOM();
     });
@@ -505,22 +498,16 @@
       try {
         let { data: cfgRow } = await supabaseClient.from('site_config').select('*').eq('id', 'global').single();
         if (cfgRow) appState.config = cfgRow.data;
-        else await supabaseClient.from('site_config').insert([{ id: 'global', data: appState.config }]);
-
+        
         let { data: prods } = await supabaseClient.from('products').select('*').order('created_at', { ascending: true });
         if (prods && prods.length > 0) appState.products = prods;
-        else {
-          const { data: inserted } = await supabaseClient.from('products').insert(defaultCatalogData).select();
-          if (inserted) appState.products = inserted;
-        }
+        else appState.products = defaultCatalogData;
       } catch (e) {
-        console.error("Sincronización local activa:", e);
         appState.products = defaultCatalogData;
       }
     }
 
     function renderClientDOM() {
-      // Sincronizar logotipo e identidad visual
       const logoImg = document.getElementById('uiBrandLogo');
       if (appState.config.logoUrl) {
         logoImg.src = appState.config.logoUrl;
@@ -562,14 +549,6 @@
       if (appState.activeCategory !== "Todos") {
         list = list.filter(p => p.category === appState.activeCategory);
       }
-      const sort = document.getElementById('sortSelect').value;
-      if (sort === "asc" || sort === "desc") {
-        list.sort((a, b) => {
-          const pA = Object.values(a.price)[0] || 0;
-          const pB = Object.values(b.price)[0] || 0;
-          return sort === "asc" ? pA - pB : pB - pA;
-        });
-      }
       document.getElementById('catalogGrid').innerHTML = list.map(p => buildProductHTML(p, 'cat')).join('');
     }
 
@@ -578,7 +557,6 @@
       const img = p.image_url ? `<img src="${p.image_url}" alt="${p.name}">` : `<div style="height:100%; display:flex; align-items:center; justify-content:center; background:var(--beige); color:#888; font-size:0.8rem;">Mak Empanadas</div>`;
       const suf = `${view}_${p.id}`;
 
-      // LÓGICA DE CONTROL OBLIGATORIO DE EMPANADAS FRITAS (BOTONES INTERNOS DE RELLENO Y CANTIDAD)
       if (p.is_special) {
         return `
           <div class="product-card" id="card_${suf}">
@@ -592,8 +570,6 @@
                   <label><input type="radio" name="rel_${suf}" value="Carne" checked> Carne</label>
                   <label><input type="radio" name="rel_${suf}" value="Queso"> Queso</label>
                   <label><input type="radio" name="rel_${suf}" value="Mechada Queso"> Mechada Queso</label>
-                  <label><input type="radio" name="rel_${suf}" value="Napolitana"> Napolitana</label>
-                  <label><input type="radio" name="rel_${suf}" value="Jamón Queso"> Jamón Queso</label>
                   <label><input type="radio" name="rel_${suf}" value="Camarón Queso" onchange="updateSpecialPrice('${p.id}','${suf}')"> Camarón Queso</label>
                 </div>
                 <span class="special-title">Selecciona Cantidad *</span>
@@ -612,7 +588,6 @@
         `;
       }
 
-      // VISTA DE PRODUCTOS ESTÁNDAR
       const formats = Object.keys(p.price);
       let selector = '';
       if (formats.length > 1) {
@@ -669,7 +644,6 @@
     function addStandardToCart(id, suf) {
       const p = appState.products.find(item => item.id === id);
       const qty = parseInt(document.getElementById(`cnt_${suf}`).textContent);
-      
       let format = Object.keys(p.price)[0];
       let price = p.price[format];
 
@@ -682,7 +656,7 @@
       const cartKey = `${id}_${format}`;
       const match = appState.cart.find(c => c.cartKey === cartKey);
       if (match) match.qty += qty;
-      else appState.cart.push({ cartKey, id, name: p.name, format: format.includes("unidades") ? format : `${format} unidades`, price, qty });
+      else appState.cart.push({ cartKey, id, name: p.name, format, price, qty });
 
       document.getElementById(`cnt_${suf}`).textContent = "1";
       updateCartBadge();
@@ -692,8 +666,8 @@
       const p = appState.products.find(item => item.id === id);
       const relleno = document.querySelector(`input[name="rel_${suf}"]:checked`).value;
       const format = document.querySelector(`input[name="qty_${suf}"]:checked`).value;
-      
       const isCamaron = relleno === "Camarón Queso";
+      
       let price = 9000;
       if (format === "50 unidades") price = isCamaron ? p.price.50_camaron : p.price.50_unidades;
       if (format === "100 unidades") price = isCamaron ? p.price.100_camaron : p.price.100_unidades;
@@ -775,7 +749,6 @@
       }
     }
 
-    // FLUJO AUTOMÁTICO COMPLETO: SUPABASE + EMAIL AUTOMÁTICO SIN INTERRUPCIÓN + WHATSAPP
     async function executeCheckoutProcess() {
       const name = document.getElementById('chkName').value.trim();
       const phone = document.getElementById('chkPhone').value.trim();
@@ -786,57 +759,20 @@
       const obs = document.getElementById('chkObservations').value.trim();
 
       if (!name || !phone || !date || !time) {
-        alert("Por favor rellene todos los campos obligatorios marcados con (*)");
-        return;
-      }
-      if ((method === "delivery_urban" || method === "delivery_rural") && !address) {
-        alert("La dirección es estrictamente requerida para despachos.");
+        alert("Por favor rellene todos los campos obligatorios (*)");
         return;
       }
 
       const subtotal = appState.cart.reduce((s, i) => s + (i.price * i.qty), 0);
       let delivery = 0;
-      let methodText = "Retiro en domicilio: Gratis";
-      if (method === "delivery_urban") { delivery = 4000; methodText = "Delivery Punta Arenas ($4.000)"; }
-      if (method === "delivery_rural") { delivery = 5000; methodText = "Delivery fuera del radio urbano ($5.000)"; }
+      let methodText = "Retiro en domicilio";
+      if (method === "delivery_urban") { delivery = 4000; methodText = "Delivery Punta Arenas"; }
+      if (method === "delivery_rural") { delivery = 5000; methodText = "Delivery rural"; }
       const total = subtotal + delivery;
 
-      // Desglose de productos estructurado idénticamente para email y para whatsapp
       const itemsLines = appState.cart.map(i => `• ${i.name} [${i.format}] x${i.qty} — $${(i.price * i.qty).toLocaleString('es-CL')}`).join('\n');
 
-      // 1. Guardar permanentemente en Supabase Database
-      if (supabaseClient) {
-        try {
-          await supabaseClient.from('orders').insert([{
-            client_name: name, phone, delivery_method: methodText, address: address || null,
-            delivery_date: date, delivery_time: time, observations: obs || null,
-            items: appState.cart, subtotal, delivery_cost: delivery, total
-          }]);
-        } catch (err) { console.error("Error al registrar pedido en Supabase:", err); }
-      }
-
-      // 2. Envío automatizado de correo electrónico de respaldo al local via EmailJS
-      if (window.emailjs && EMAILJS_PUBLIC_KEY !== "YOUR_EMAILJS_PUBLIC_KEY") {
-        const emailParams = {
-          client_name: name,
-          phone: phone,
-          delivery_method: methodText,
-          address: address || "Retiro en Domicilio",
-          delivery_date: date,
-          delivery_time: time,
-          items_details: itemsLines,
-          observations: obs || "Ninguna",
-          subtotal: `$${subtotal.toLocaleString('es-CL')}`,
-          delivery_cost: `$${delivery.toLocaleString('es-CL')}`,
-          total: `$${total.toLocaleString('es-CL')}`
-        };
-
-        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams)
-          .then(() => console.log("Confirmación automática enviada exitosamente por email."))
-          .catch(e => console.error("Error en el envío automatizado de EmailJS:", e));
-      }
-
-      // 3. Formato del mensaje estructurado para WhatsApp
+      // WhatsApp format
       const wsMessage = `Hola Mak Empanadas! Quiero agendar mi pedido:\n\n` +
                         `*Nombre:* ${name}\n` +
                         `*Teléfono:* ${phone}\n` +
@@ -844,7 +780,6 @@
                         `*Fecha:* ${date}\n` +
                         `*Hora:* ${time}\n\n` +
                         `*Productos:*\n${itemsLines}\n\n` +
-                        `*Observaciones:* ${obs || 'Ninguna'}\n\n` +
                         `*Subtotal:* $${subtotal.toLocaleString('es-CL')}\n` +
                         `*Delivery:* $${delivery.toLocaleString('es-CL')}\n` +
                         `*Total:* $${total.toLocaleString('es-CL')}`;
@@ -856,21 +791,21 @@
       window.open(`https://wa.me/56989653397?text=${encodeURIComponent(wsMessage)}`, '_blank');
     }
 
-    /* --- MÓDULO INTERNO DEL ADMINISTRADOR AVANZADO --- */
+    /* --- CODIGO DEL ADMINISTRADOR --- */
     function handleAdminAccess() {
       if (prompt("Contraseña del Administrador:") === "010752am") {
         document.getElementById('clientView').style.display = "none";
         document.getElementById('adminView').style.display = "block";
         loadAdminPanelFields();
       } else {
-        alert("Código incorrecto.");
+        alert("Contraseña incorrecta.");
       }
     }
 
     function exitAdminMode() {
       document.getElementById('adminView').style.display = "none";
       document.getElementById('clientView').style.display = "block";
-      if (supabaseClient) syncDataWithSupabase().then(() => renderClientDOM());
+      renderClientDOM();
     }
 
     function loadAdminPanelFields() {
@@ -889,10 +824,13 @@
       appState.config.heroTitle = document.getElementById('admHeroTitle').value.trim();
       appState.config.heroSub = document.getElementById('admHeroSub').value.trim();
 
-      if (supabaseClient) {
+      if (useSupabase) {
         await supabaseClient.from('site_config').update({ data: appState.config }).eq('id', 'global');
+      } else {
+        localStorage.setItem('mak_config', JSON.stringify(appState.config));
       }
-      alert("Identidad visual y textos modificados permanentemente en Supabase.");
+      alert("Identidad guardada con éxito.");
+      renderClientDOM();
     }
 
     function renderAdminDates() {
@@ -905,7 +843,8 @@
       const val = document.getElementById('admBlockDate').value;
       if (val && !appState.config.clausuredDates.includes(val)) {
         appState.config.clausuredDates.push(val);
-        if (supabaseClient) await supabaseClient.from('site_config').update({ data: appState.config }).eq('id', 'global');
+        if (useSupabase) await supabaseClient.from('site_config').update({ data: appState.config }).eq('id', 'global');
+        else localStorage.setItem('mak_config', JSON.stringify(appState.config));
         renderAdminDates();
         document.getElementById('admBlockDate').value = "";
       }
@@ -913,7 +852,8 @@
 
     async function removeDateBlock(d) {
       appState.config.clausuredDates = appState.config.clausuredDates.filter(item => item !== d);
-      if (supabaseClient) await supabaseClient.from('site_config').update({ data: appState.config }).eq('id', 'global');
+      if (useSupabase) await supabaseClient.from('site_config').update({ data: appState.config }).eq('id', 'global');
+      else localStorage.setItem('mak_config', JSON.stringify(appState.config));
       renderAdminDates();
     }
 
@@ -931,7 +871,7 @@
         addPriceInputRow("100 empanadas camarón queso", "100_camaron", true);
       } else {
         document.getElementById('btnAddPriceRow').style.display = "inline-block";
-        addPriceInputRow("Formato (Ej: 25 unidades o Base)", "Base");
+        addPriceInputRow("Ej: 25 unidades", "25 unidades");
       }
     }
 
@@ -941,7 +881,7 @@
       div.className = "price-row-item";
       div.style.display = "flex"; div.style.gap = "8px";
       div.innerHTML = `
-        <input type="text" class="p-key" placeholder="Ej. 25" value="${key || label}" ${disabled ? 'readonly' : ''} style="flex:1; padding:5px; border-radius:4px; border:1px solid #ccc;">
+        <input type="text" class="p-key" placeholder="Cantidad" value="${key || label}" ${disabled ? 'readonly' : ''} style="flex:1; padding:5px; border-radius:4px; border:1px solid #ccc;">
         <input type="number" class="p-val" placeholder="Precio $" style="flex:1; padding:5px; border-radius:4px; border:1px solid #ccc;" required>
         ${!disabled ? `<button type="button" onclick="this.parentElement.remove()" style="background:#FCA5A5; border:none; padding:0 10px; border-radius:4px; cursor:pointer;">×</button>` : ''}
       `;
@@ -951,7 +891,7 @@
     function renderAdminProducts() {
       document.getElementById('adminProductsContainer').innerHTML = appState.products.map(p => `
         <div class="admin-item-row">
-          <div><strong>${p.name}</strong> — Categoría: [${p.category}]</div>
+          <div><strong>${p.name}</strong> — [${p.category}]</div>
           <div style="display:flex; gap:8px;">
             <button style="padding:4px 10px; background:#FDE68A; border:none; cursor:pointer; border-radius:4px;" onclick="editProductRow('${p.id}')">Editar</button>
             <button style="padding:4px 10px; background:#FCA5A5; border:none; cursor:pointer; border-radius:4px;" onclick="deleteProductRow('${p.id}')">Eliminar</button>
@@ -964,7 +904,7 @@
       const p = appState.products.find(item => item.id === id);
       if (!p) return;
 
-      document.getElementById('formProductTitle').textContent = "Modificando Producto Seleccionado";
+      document.getElementById('formProductTitle').textContent = "Modificando Producto";
       document.getElementById('formProductId').value = p.id;
       document.getElementById('formProdName').value = p.name;
       document.getElementById('formProdCategory').value = p.category;
@@ -999,7 +939,7 @@
       const id = document.getElementById('formProductId').value;
       const name = document.getElementById('formProdName').value.trim().toUpperCase();
       const category = document.getElementById('formProdCategory').value;
-      let image_url = document.getElementById('formProdImgUrl').value;
+      let image_url = document.getElementById('formProdImgUrl').value.trim();
       const is_featured = document.getElementById('formProdFeatured').checked;
       const hasBadge = document.getElementById('formProdBadge').checked;
 
@@ -1010,45 +950,35 @@
         if (k && !isNaN(v)) price[k] = v;
       });
 
-      const fileInput = document.getElementById('formProdFile');
-      if (fileInput.files.length > 0 && supabaseClient) {
-        const file = fileInput.files[0];
-        const path = `products/${Date.now()}_${file.name}`;
-        const { error: upErr } = await supabaseClient.storage.from('product-images').upload(path, file);
-        if (!upErr) {
-          const { data } = supabaseClient.storage.from('product-images').getPublicUrl(path);
-          image_url = data.publicUrl;
-        }
-      }
+      const payload = { id: id || Date.now().toString(), name, category, price, image_url, is_special: (category === "Empanadas"), is_featured, badge: hasBadge ? "Más vendido" : null };
 
-      const payload = { name, category, price, image_url, is_special: (category === "Empanadas"), is_featured, badge: hasBadge ? "Más vendido" : null };
-
-      if (supabaseClient) {
+      if (useSupabase) {
         if (id) await supabaseClient.from('products').update(payload).eq('id', id);
         else await supabaseClient.from('products').insert([payload]);
         await syncDataWithSupabase();
       } else {
         if (id) {
           const idx = appState.products.findIndex(x => x.id === id);
-          if (idx !== -1) appState.products[idx] = { ...appState.products[idx], ...payload };
+          if (idx !== -1) appState.products[idx] = payload;
         } else {
-          payload.id = Date.now().toString();
           appState.products.push(payload);
         }
+        localStorage.setItem('mak_products', JSON.stringify(appState.products));
       }
 
       clearProductForm();
       renderAdminProducts();
-      alert("Cambios impactados y resguardados con éxito en la base de datos.");
+      alert("Catálogo actualizado.");
     }
 
     async function deleteProductRow(id) {
-      if (confirm("¿Estás completamente seguro de eliminar este artículo del catálogo?")) {
-        if (supabaseClient) {
+      if (confirm("¿Eliminar este producto?")) {
+        if (useSupabase) {
           await supabaseClient.from('products').delete().eq('id', id);
           await syncDataWithSupabase();
         } else {
           appState.products = appState.products.filter(p => p.id !== id);
+          localStorage.setItem('mak_products', JSON.stringify(appState.products));
         }
         renderAdminProducts();
       }
@@ -1058,7 +988,6 @@
       document.getElementById('formProductTitle').textContent = "Añadir o Editar Producto en el Catálogo";
       document.getElementById('formProductId').value = "";
       document.getElementById('productForm').reset();
-      document.getElementById('formProdImgUrl').value = "";
       setupPriceInputsBasedOnCategory();
     }
   </script>
