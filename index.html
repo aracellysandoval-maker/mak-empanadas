@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mak Empanadas — Ecommerce Completo con Panel de Control</title>
+  
+  <meta name="description" content="Mak Empanadas - Productos caseros para tus momentos especiales en Punta Arenas. Canapés, empanadas fritas, sándwiches, completos, dulces y más.">
+  <meta name="keywords" content="Empanadas Punta Arenas, Canapés Punta Arenas, Mak Empanadas, Coctelería Punta Arenas">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+  <style>
+    :root {
+      --rosado-pastel: #F7E1D7;
+      --beige: #F5EBE0;
+      --crema: #FAEDCD;
+      --lila-pastel: #E8E8E4;
+      --celeste-pastel: #D8E2DC;
+      --rose-gold: #B76E79;
+      --rose-gold-dark: #9E5A64;
+      --text-dark: #3D3A3A;
+      --white: #FFFFFF;
+      --shadow: rgba(61, 58, 58, 0.08);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Poppins', sans-serif; color: var(--text-dark); background-color: var(--white); overflow-x: hidden; }
+
+    h1, h2, h3, h4 { font-family: 'Playfair Display', serif; font-weight: 700; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    
+    .btn-premium { 
+      background: var(--rose-gold-dark); 
+      color: var(--white); 
+      border: none; 
+      padding: 12px 28px; 
+      border-radius: 30px; 
+      font-weight: 500; 
+      font-size: 0.95rem; 
+      cursor: pointer; 
+      transition: var(--transition); 
+      text-decoration: none; 
+      display: inline-block; 
+      box-shadow: 0 4px 10px rgba(158,90,100,0.2); 
+    }
+    .btn-premium:hover { background: var(--rose-gold); transform: translateY(-2px); }
+
+    /* --- VISTA CLIENTE --- */
+    #clientView { display: block; }
+    header { background: var(--white); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--rosado-pastel); box-shadow: 0 2px 10px var(--shadow); }
+    .nav-wrapper { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; max-width: 1200px; margin: 0 auto; }
+    
+    .logo-area { display: flex; align-items: center; gap: 12px; }
+    .admin-trigger { font-size: 1.5rem; cursor: pointer; user-select: none; transition: var(--transition); }
+    .admin-trigger:hover { transform: scale(1.2); }
+    .brand-logo-img { height: 45px; width: 45px; object-fit: cover; border-radius: 50%; display: none; border: 1px solid var(--rose-gold); }
+    .brand-text h1 { font-size: 1.5rem; color: var(--rose-gold-dark); font-weight: 800; }
+    
+    nav ul { display: flex; list-style: none; gap: 20px; }
+    nav ul a { text-decoration: none; color: var(--text-dark); font-size: 0.9rem; font-weight: 500; transition: var(--transition); }
+    nav ul a:hover { color: var(--rose-gold); }
+
+    /* Hero */
+    .hero-sec { background: linear-gradient(135deg, var(--beige) 0%, var(--rosado-pastel) 100%); padding: 90px 0 70px; text-align: center; }
+    .hero-sec h2 { font-size: 3rem; line-height: 1.2; margin-bottom: 15px; color: var(--text-dark); }
+    .hero-sec p { max-width: 750px; margin: 0 auto 30px; font-size: 1.05rem; color: #555; line-height: 1.6; }
+    .hero-buttons { display: flex; justify-content: center; gap: 15px; }
+
+    /* Beneficios */
+    .benefits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: -30px auto 50px; position: relative; z-index: 10; }
+    .benefit-card { background: var(--white); padding: 18px; border-radius: 12px; text-align: center; box-shadow: 0 6px 20px var(--shadow); border: 1px solid var(--crema); font-weight: 500; color: var(--rose-gold-dark); font-size: 0.85rem; }
+
+    /* Opciones Especiales */
+    .specials-sec { background: var(--lila-pastel); padding: 60px 0; text-align: center; }
+    .specials-sec h3 { font-size: 2.2rem; margin-bottom: 15px; }
+    .specials-p { max-width: 700px; margin: 0 auto 35px; color: #555; font-size: 0.95rem; }
+    .specials-cards { display: flex; justify-content: center; flex-wrap: wrap; gap: 25px; }
+    .special-pill { background: var(--white); padding: 25px 35px; border-radius: 15px; box-shadow: 0 4px 12px var(--shadow); text-align: center; font-weight: 600; font-size: 1rem; }
+
+    /* Catálogo y Destacados */
+    .section-title { font-size: 2.2rem; text-align: center; margin-bottom: 35px; position: relative; padding-bottom: 12px; }
+    .section-title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 50px; height: 3px; background: var(--rose-gold); }
+    
+    .featured-sec { padding: 60px 0; background: var(--white); }
+    .catalog-sec { padding: 60px 0; background: var(--crema); }
+
+    .catalog-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; flex-wrap: wrap; gap: 15px; }
+    .filter-chips { display: flex; gap: 10px; flex-wrap: wrap; }
+    .chip { padding: 8px 20px; border-radius: 20px; border: 1px solid var(--rose-gold); background: var(--white); color: var(--text-dark); font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: var(--transition); }
+    .chip.active, .chip:hover { background: var(--rose-gold); color: var(--white); }
+    .sort-select { padding: 8px 16px; border-radius: 20px; border: 1px solid var(--rose-gold); font-family: inherit; font-size: 0.85rem; background: var(--white); cursor: pointer; outline: none; }
+
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
+    
+    /* Tarjeta de Producto */
+    .product-card { background: var(--white); border-radius: 16px; overflow: hidden; box-shadow: 0 6px 16px var(--shadow); display: flex; flex-direction: column; position: relative; border: 1px solid rgba(183,110,121,0.05); transition: var(--transition); }
+    .badge-best { position: absolute; top: 12px; right: 12px; background: var(--rose-gold-dark); color: var(--white); padding: 4px 12px; border-radius: 15px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; z-index: 5; }
+    
+    .img-wrapper { width: 100%; aspect-ratio: 4/3; background: var(--beige); overflow: hidden; }
+    .img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .card-info { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+    .card-info h3 { font-size: 1.25rem; margin-bottom: 6px; color: var(--text-dark); }
+    .card-info .desc { display: none; } /* REQUISITO EXPLICITO: No agregar información extra ni descripción en tarjetas */
+    
+    .format-selector { margin-bottom: 12px; }
+    .format-selector label { display: block; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: #888; margin-bottom: 4px; }
+    .format-selector select { width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--rosado-pastel); font-family: inherit; font-size: 0.85rem; background: var(--white); outline: none; }
+    
+    /* Configuración de Selección Obligatoria para Empanadas */
+    .special-box { background: var(--celeste-pastel); padding: 12px; border-radius: 10px; margin-bottom: 12px; }
+    .special-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 6px; color: var(--rose-gold-dark); display: block; }
+    .radio-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+    .radio-group label { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer; font-weight: 500; }
+    .radio-group input[type="radio"] { accent-color: var(--rose-gold-dark); }
+
+    .action-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: auto; border-top: 1px solid var(--beige); padding-top: 12px; }
+    .price-display { font-size: 1.2rem; font-weight: 700; color: var(--rose-gold-dark); }
+    
+    .qty-counter { display: flex; align-items: center; border: 1px solid var(--rose-gold); border-radius: 15px; overflow: hidden; }
+    .qty-counter button { width: 28px; height: 28px; background: none; border: none; font-size: 1rem; cursor: pointer; }
+    .qty-counter button:hover { background: var(--rosado-pastel); }
+    .qty-counter span { width: 26px; text-align: center; font-size: 0.85rem; font-weight: 600; }
+
+    .btn-add-cart { background: var(--text-dark); color: var(--white); border: none; padding: 8px 16px; border-radius: 15px; font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: var(--transition); }
+    .btn-add-cart:hover { background: var(--rose-gold-dark); }
+
+    /* Footer */
+    footer { background: var(--text-dark); color: rgba(255,255,255,0.7); padding: 35px 0; text-align: center; font-size: 0.85rem; border-top: 3px solid var(--rose-gold); }
+    footer h4 { color: var(--white); margin-bottom: 8px; font-size: 1.1rem; }
+
+    /* Elementos flotantes */
+    .btn-float-wa { position: fixed; bottom: 25px; left: 25px; background-color: #25D366; color: white; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 99; text-decoration: none; }
+    .sticky-cart-trigger { position: fixed; bottom: 25px; right: 25px; background: var(--rose-gold-dark); color: white; padding: 12px 24px; border-radius: 25px; border: none; font-family: inherit; font-weight: 600; font-size: 0.95rem; box-shadow: 0 4px 15px rgba(0,0,0,0.15); cursor: pointer; z-index: 99; display: flex; align-items: center; gap: 8px; }
+    .cart-indicator { background: white; color: var(--rose-gold-dark); font-size: 0.75rem; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+
+    /* Desplegable Carrito de Compras */
+    .panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 150; opacity: 0; pointer-events: none; transition: var(--transition); backdrop-filter: blur(2px); }
+    .panel-overlay.active { opacity: 1; pointer-events: all; }
+    .panel-container { position: fixed; top: 0; right: -460px; bottom: 0; width: 100%; max-width: 440px; background: var(--white); z-index: 160; box-shadow: -4px 0 20px rgba(0,0,0,0.1); transition: var(--transition); display: flex; flex-direction: column; }
+    .panel-overlay.active .panel-container { right: 0; }
+    .panel-header { padding: 20px; border-bottom: 1px solid var(--beige); display: flex; justify-content: space-between; align-items: center; background: var(--rosado-pastel); }
+    .panel-close { background: none; border: none; font-size: 1.6rem; cursor: pointer; }
+    .panel-body { padding: 20px; flex-grow: 1; overflow-y: auto; }
+    
+    .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--beige); font-size: 0.85rem; }
+    .cart-item-remove { font-size: 0.75rem; color: #c94c4c; cursor: pointer; background: none; border: none; margin-top: 4px; text-decoration: underline; }
+
+    /* Formulario Checkout */
+    .checkout-form { margin-top: 20px; background: var(--beige); padding: 15px; border-radius: 12px; }
+    .checkout-form h4 { margin-bottom: 12px; font-size: 1rem; border-bottom: 1px solid var(--rosado-pastel); padding-bottom: 4px; }
+    .input-group { margin-bottom: 10px; }
+    .input-group label { display: block; font-size: 0.75rem; font-weight: 500; margin-bottom: 3px; }
+    .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; font-family: inherit; font-size: 0.85rem; background: white; outline: none; }
+    
+    .important-notice { background: var(--white); border-left: 4px solid var(--rose-gold-dark); padding: 10px; font-size: 0.75rem; border-radius: 4px; margin: 12px 0; font-weight: 500; line-height: 1.4; }
+    .summary-box { background: var(--crema); padding: 12px; border-radius: 8px; margin-top: 12px; font-size: 0.85rem; }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
+    .summary-row.total { font-size: 1rem; font-weight: 700; color: var(--rose-gold-dark); border-top: 1px dashed var(--rose-gold); padding-top: 6px; }
+    .panel-footer { padding: 20px; border-top: 1px solid var(--beige); }
+
+    /* --- VISTA ADMINISTRADOR (CON MÚLTIPLES OPCIONES DE MANEJO VISUAL) --- */
+    #adminView { display: none; background: #F3F4F6; min-height: 100vh; padding-bottom: 60px; }
+    .admin-nav { background: var(--text-dark); color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .admin-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 30px; max-width: 1300px; margin: 30px auto; padding: 0 20px; }
+    @media(max-width: 900px) { .admin-layout { grid-template-columns: 1fr; } }
+    
+    .admin-box { background: var(--white); border-radius: 14px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid #E5E7EB; }
+    .admin-box h3 { font-size: 1.3rem; margin-bottom: 18px; border-bottom: 2px solid var(--rosado-pastel); padding-bottom: 8px; color: var(--text-dark); }
+    
+    .btn-admin { background: var(--text-dark); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; cursor: pointer; width: 100%; text-align: center; transition: var(--transition); }
+    .btn-admin:hover { background: var(--rose-gold-dark); }
+    .btn-admin.success { background: #10B981; }
+    .btn-admin.success:hover { background: #059669; }
+    .btn-admin.danger { background: #EF4444; }
+    .btn-admin.danger:hover { background: #DC2626; }
+    
+    .price-row-item { background: #F9FAFB; padding: 8px; border-radius: 6px; border: 1px solid #E5E7EB; margin-bottom: 6px; }
+    .admin-item-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #F9FAFB; border: 1px solid #E5E7EB; margin-bottom: 10px; border-radius: 8px; font-size: 0.85rem; }
+    .closed-date-tag { display: inline-flex; align-items: center; gap: 6px; background: #FEE2E2; color: #991B1B; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; margin: 4px; font-weight: 500; }
+  </style>
+</head>
+<body>
+
+  <div id="clientView">
+    <header>
+      <div class="nav-wrapper">
+        <div class="logo-area">
+          <div class="admin-trigger" ondblclick="handleAdminAccess()" title="Doble clic para ir al Panel de Control">🥟</div>
+          <img src="" id="uiBrandLogo" class="brand-logo-img" alt="Logo">
+          <div class="brand-text">
+            <h1 id="uiStoreName">Mak Empanadas</h1>
+          </div>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#catalogo">Catálogo</a></li>
+            <li><a href="#nosotros">Nosotros</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+            <li><a href="javascript:void(0)" onclick="toggleCartPanel(true)">Carrito</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <section class="hero-sec" id="inicio">
+      <div class="container">
+        <h2 id="uiHeroTitle">Productos caseros para tus momentos especiales</h2>
+        <p id="uiHeroSub">Canapés, empanadas fritas, sándwiches, completos, dulces y mucho más para reuniones, cumpleaños y celebraciones.</p>
+        <div class="hero-buttons">
+          <a href="#catalogo" class="btn-premium">Ver Catálogo</a>
+          <a href="#catalogo" class="btn-premium" style="background: var(--text-dark);">Realizar Pedido</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="container">
+      <div class="benefits-grid">
+        <div class="benefit-card">✓ Más de 3 años de experiencia</div>
+        <div class="benefit-card">✓ Elaboración artesanal</div>
+        <div class="benefit-card">✓ Ingredientes frescos</div>
+        <div class="benefit-card">✓ Pedidos programados</div>
+        <div class="benefit-card">✓ Delivery en Punta Arenas</div>
+        <div class="benefit-card">✓ Opciones vegetarianas</div>
+        <div class="benefit-card">✓ Opciones veganas</div>
+      </div>
+    </div>
+
+    <section class="specials-sec" id="nosotros">
+      <div class="container">
+        <h3>Opciones para todos los gustos</h3>
+        <p class="specials-p">Además de nuestras preparaciones tradicionales, contamos con opciones vegetarianas y veganas para que todos puedan disfrutar de una experiencia deliciosa y de calidad.</p>
+        <div class="specials-cards">
+          <div class="special-pill">🥬 Opciones Vegetarianas</div>
+          <div class="special-pill">🌱 Opciones Veganas</div>
+          <div class="special-pill">🥟 Elaboración Artesanal</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="featured-sec">
+      <div class="container">
+        <h2 class="section-title">Favoritos de nuestros clientes</h2>
+        <div class="products-grid" id="featuredGrid"></div>
+      </div>
+    </section>
+
+    <section class="catalog-sec" id="catalogo">
+      <div class="container">
+        <h2 class="section-title">Nuestro Catálogo</h2>
+        
+        <div class="catalog-toolbar">
+          <div class="filter-chips" id="categoryChips"></div>
+          <select class="sort-select" id="sortSelect" onchange="renderCatalog()">
+            <option value="default">Todos</option>
+            <option value="asc">Menor precio</option>
+            <option value="desc">Mayor precio</option>
+          </select>
+        </div>
+
+        <div class="products-grid" id="catalogGrid"></div>
+      </div>
+    </section>
+
+    <footer id="contacto">
+      <div class="container">
+        <h4 id="uiFooterName">Mak Empanadas</h4>
+        <p>Elaborando productos caseros para celebraciones, cumpleaños, reuniones familiares y ocasiones especiales con más de 3 años de experiencia.</p>
+        <p style="margin-top: 15px; font-weight: 500; color: var(--rose-gold);">Punta Arenas, Chile</p>
+      </div>
+    </footer>
+
+    <a href="https://wa.me/56989653397" class="btn-float-wa" target="_blank" rel="noopener">💬</a>
+    
+    <button class="sticky-cart-trigger" onclick="toggleCartPanel(true)">
+      🛒 Carrito <span class="cart-indicator" id="cartBadge">0</span>
+    </button>
+
+    <div class="panel-overlay" id="panelOverlay" onclick="if(event.target===this) toggleCartPanel(false)">
+      <div class="panel-container">
+        <div class="panel-header">
+          <h3>Resumen de Pedido</h3>
+          <button class="panel-close" onclick="toggleCartPanel(false)">×</button>
+        </div>
+        
+        <div class="panel-body">
+          <div id="cartItemsContainer"></div>
+          
+          <div class="checkout-form" id="checkoutBlock" style="display: none;">
+            <h4>Datos de Entrega</h4>
+            <div class="input-group">
+              <label>Nombre completo *</label>
+              <input type="text" id="chkName">
+            </div>
+            <div class="input-group">
+              <label>Teléfono *</label>
+              <input type="tel" id="chkPhone">
+            </div>
+            <div class="input-group">
+              <label>Método de entrega *</label>
+              <select id="chkMethod" onchange="recalculateTotals()">
+                <option value="pickup">Retiro en domicilio: Gratis</option>
+                <option value="delivery_urban">Delivery Punta Arenas: $4.000</option>
+                <option value="delivery_rural">Delivery fuera del radio urbano: $5.000</option>
+              </select>
+            </div>
+            <div class="input-group" id="addressGroup" style="display: none;">
+              <label>Dirección *</label>
+              <input type="text" id="chkAddress">
+            </div>
+            <div class="input-group">
+              <label>Fecha del pedido *</label>
+              <input type="date" id="chkDate" onchange="validateDeliveryDate(this)">
+            </div>
+            <div class="input-group">
+              <label>Hora *</label>
+              <input type="time" id="chkTime">
+            </div>
+            <div class="input-group">
+              <label>Observaciones</label>
+              <textarea id="chkObservations" rows="2"></textarea>
+            </div>
+
+            <div class="important-notice">
+              <strong>AVISO IMPORTANTE:</strong> <br>
+              "Para confirmar y agendar su pedido es necesario abonar el 50% del valor total."
+            </div>
+          </div>
+
+          <div class="summary-box" id="summaryBlock" style="display: none;">
+            <div class="summary-row"><span>Subtotal:</span><span id="sumSubtotal">$0</span></div>
+            <div class="summary-row"><span>Delivery:</span><span id="sumDelivery">$0</span></div>
+            <div class="summary-row total"><span>Total:</span><span id="sumTotal">$0</span></div>
+          </div>
+        </div>
+        
+        <div class="panel-footer" id="panelFooterBlock"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="adminView">
+    <div class="admin-nav">
+      <h2>🥟 Panel de Administración Mak Empanadas</h2>
+      <button class="btn-premium" style="background:#4B5563;" onclick="exitAdminMode()">Volver a la Tienda</button>
+    </div>
+
+    <div class="admin-layout">
+      <div class="admin-box">
+        <h3>Manejar Identidad y Textos de la Página</h3>
+        <div class="input-group">
+          <label>URL del Logo de la Tienda</label>
+          <input type="text" id="admLogoUrl" placeholder="https://enlace.com/mi-logo.jpg">
+        </div>
+        <div class="input-group">
+          <label>Nombre de la Empresa</label>
+          <input type="text" id="admStoreName">
+        </div>
+        <div class="input-group">
+          <label>Título Principal (Sección Hero)</label>
+          <input type="text" id="admHeroTitle">
+        </div>
+        <div class="input-group">
+          <label>Subtítulo de Presentación</label>
+          <textarea id="admHeroSub" rows="3"></textarea>
+        </div>
+        <button class="btn-admin success" onclick="updateIdentityTexts()">Guardar Cambios de Identidad</button>
+
+        <h3 style="margin-top:35px;">Manejo de Fechas Clausuradas</h3>
+        <p style="font-size:0.75rem; color:#666; margin-bottom:10px;">Bloquea días específicos del calendario para que ningún cliente pueda generar pedidos en esas fechas.</p>
+        <div class="input-group">
+          <label>Fecha a Clausurar</label>
+          <input type="date" id="admBlockDate">
+        </div>
+        <button class="btn-admin" onclick="addClausuredDate()">Clausurar Fecha Seleccionada</button>
+        <div id="clausuredDatesContainer" style="margin-top:15px;"></div>
+      </div>
+
+      <div class="admin-box">
+        <h3 id="formProductTitle">Añadir o Editar Producto en el Catálogo</h3>
+        <form id="productForm" onsubmit="handleProductSubmission(event)">
+          <input type="hidden" id="formProductId">
+          
+          <div class="input-group">
+            <label>Nombre del Producto *</label>
+            <input type="text" id="formProdName" required placeholder="Ej. CHACAREROS">
+          </div>
+          
+          <div class="input-group">
+            <label>Categoría de Catálogo *</label>
+            <select id="formProdCategory" required onchange="setupPriceInputsBasedOnCategory()">
+              <option value="Canapés">Canapés</option>
+              <option value="Dulces">Dulces</option>
+              <option value="Sándwiches">Sándwiches</option>
+              <option value="Empanadas">Empanadas</option>
+              <option value="Completos">Completos</option>
+              <option value="Bandejas Mixtas">Bandejas Mixtas</option>
+              <option value="Sopaipillas">Sopaipillas</option>
+              <option value="Box">Box</option>
+            </select>
+          </div>
+          
+          <div id="pricesBlock" style="background:#F3F4F6; padding:15px; border-radius:10px; margin-bottom:15px; border:1px dashed var(--rose-gold);">
+            <label style="font-weight:700; font-size:0.8rem; display:block; margin-bottom:8px; color:var(--rose-gold-dark);">
+              Manejar Botones y Opciones de Precios por Cantidad
+            </label>
+            <div id="priceInputsContainer"></div>
+            <button type="button" id="btnAddPriceRow" class="btn-premium" style="padding:6px 12px; font-size:0.75rem; background:#4B5563; margin-top:8px;" onclick="addPriceInputRow('','')">
+              + Añadir Opción/Botón de Cantidad
+            </button>
+          </div>
+
+          <div class="input-group">
+            <label>Imagen del Producto (Subir archivo a Supabase Storage)</label>
+            <input type="file" id="formProdFile" accept="image/*">
+            <input type="hidden" id="formProdImgUrl">
+          </div>
+
+          <div style="display:flex; gap:20px; margin: 15px 0; font-size: 0.85rem; background: #FFF5F5; padding: 10px; border-radius: 6px;">
+            <label style="cursor:pointer;"><input type="checkbox" id="formProdFeatured"> ¿Aparece en Favoritos?</label>
+            <label style="cursor:pointer;"><input type="checkbox" id="formProdBadge"> ¿Lleva insignia "Más vendido"?</label>
+          </div>
+
+          <button type="submit" class="btn-admin success">Guardar Cambios Permanentemente</button>
+          <button type="button" class="btn-admin" style="background:#9CA3AF; margin-top:8px;" onclick="clearProductForm()">Limpiar Campos / Cancelar</button>
+        </form>
+
+        <h3 style="margin-top:35px;">Lista de Productos Activos en Catálogo</h3>
+        <div id="adminProductsContainer"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuración obligatoria de las APIs de conexión
+    const SUPABASE_URL = "https://your-supabase-url.supabase.co"; 
+    const SUPABASE_ANON_KEY = "your-anon-key";
+    
+    const EMAILJS_PUBLIC_KEY = "YOUR_EMAILJS_PUBLIC_KEY";
+    const EMAILJS_SERVICE_ID = "YOUR_EMAILJS_SERVICE_ID";
+    const EMAILJS_TEMPLATE_ID = "YOUR_EMAILJS_TEMPLATE_ID";
+
+    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+    if(window.emailjs && EMAILJS_PUBLIC_KEY !== "YOUR_EMAILJS_PUBLIC_KEY") {
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+    }
+
+    // Estado unificado en tiempo real de la aplicación
+    let appState = {
+      config: {
+        logoUrl: "",
+        storeName: "Mak Empanadas",
+        heroTitle: "Productos caseros para tus momentos especiales",
+        heroSub: "Canapés, empanadas fritas, sándwiches, completos, dulces y mucho más para reuniones, cumpleaños y celebraciones.",
+        clausuredDates: []
+      },
+      products: [],
+      cart: [],
+      activeCategory: "Todos"
+    };
+
+    // Estructura limpia y exacta de productos solicitados sin descripciones extras
+    const defaultCatalogData = [
+      { name: "CANAPÉS MIXTOS", category: "Canapés", price: {"50": 25000, "100": 45000}, is_special: false, is_featured: false },
+      { name: "ALFAJORES DE MAICENA", category: "Dulces", price: {"40": 16000}, is_special: false, is_featured: false },
+      { name: "CALZONES ROTOS", category: "Dulces", price: {"40": 12000}, is_special: false, is_featured: false },
+      { name: "CALZONES ROTOS BAÑADOS", category: "Dulces", price: {"40": 16000}, is_special: false, is_featured: false },
+      { name: "CHACAREROS", category: "Sándwiches", price: {"25": 20000, "50": 33000, "100": 55000}, is_special: false, is_featured: true, badge: "Más vendido" },
+      { name: "BARROS LUCO", category: "Sándwiches", price: {"25": 20000, "50": 33000, "100": 55000}, is_special: false, is_featured: false },
+      { name: "AVE PALTA MAYO", category: "Sándwiches", price: {"25": 20000, "50": 33000, "100": 55000}, is_special: false, is_featured: false },
+      { name: "TOCINO", category: "Sándwiches", price: {"25": 25000, "50": 40000, "100": 70000}, is_special: false, is_featured: false },
+      { name: "HAMBURGUESA CHEDDAR", category: "Sándwiches", price: {"25": 25000, "50": 40000, "100": 70000}, is_special: false, is_featured: false },
+      { name: "HAMBURGUESA", category: "Sándwiches", price: {"25": 25000, "50": 40000, "100": 70000}, is_special: false, is_featured: false },
+      { name: "VEGETARIANO", category: "Sándwiches", price: {"25": 20000, "50": 33000, "100": 55000}, is_special: false, is_featured: false },
+      { name: "COMPLETOS", category: "Completos", price: {"25": 23000, "50": 40000}, is_special: false, is_featured: true, badge: "Más vendido" },
+      { name: "BANDEJA MIXTA", category: "Bandejas Mixtas", price: {"1": 15000}, is_special: false, is_featured: false },
+      { name: "SOPAIPILLAS", category: "Sopaipillas", price: {"25": 12000}, is_special: false, is_featured: false },
+      { name: "EMPANADAS FRITAS", category: "Empanadas", price: {"25_congeladas": 9000, "50_unidades": 20000, "100_unidades": 40000, "50_camaron": 23000, "100_camaron": 45000}, is_special: true, is_featured: true, badge: "Más vendido" }
+    ];
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('chkDate').min = today;
+      document.getElementById('admBlockDate').min = today;
+
+      if (supabaseClient) {
+        await syncDataWithSupabase();
+      } else {
+        appState.products = defaultCatalogData;
+      }
+      renderClientDOM();
+    });
+
+    async function syncDataWithSupabase() {
+      try {
+        let { data: cfgRow } = await supabaseClient.from('site_config').select('*').eq('id', 'global').single();
+        if (cfgRow) appState.config = cfgRow.data;
+        else await supabaseClient.from('site_config').insert([{ id: 'global', data: appState.config }]);
+
+        let { data: prods } = await supabaseClient.from('products').select('*').order('created_at', { ascending: true });
+        if (prods && prods.length > 0) appState.products = prods;
+        else {
+          const { data: inserted } = await supabaseClient.from('products').insert(defaultCatalogData).select();
+          if (inserted) appState.products = inserted;
+        }
+      } catch (e) {
+        console.error("Sincronización local activa:", e);
+        appState.products = defaultCatalogData;
+      }
+    }
+
+    function renderClientDOM() {
+      // Sincronizar logotipo e identidad visual
+      const logoImg = document.getElementById('uiBrandLogo');
+      if (appState.config.logoUrl) {
+        logoImg.src = appState.config.logoUrl;
+        logoImg.style.display = "block";
+      } else {
+        logoImg.style.display = "none";
+      }
+
+      document.getElementById('uiStoreName').textContent = appState.config.storeName;
+      document.getElementById('uiFooterName').textContent = appState.config.storeName;
+      document.getElementById('uiHeroTitle').textContent = appState.config.heroTitle;
+      document.getElementById('uiHeroSub').textContent = appState.config.heroSub;
+
+      renderChips();
+      renderFeatured();
+      renderCatalog();
+    }
+
+    function renderChips() {
+      const categories = ["Todos", "Canapés", "Dulces", "Sándwiches", "Empanadas", "Completos", "Bandejas Mixtas", "Sopaipillas", "Box"];
+      document.getElementById('categoryChips').innerHTML = categories.map(cat => `
+        <button class="chip ${appState.activeCategory === cat ? 'active' : ''}" onclick="filterCategory('${cat}')">${cat}</button>
+      `).join('');
+    }
+
+    function filterCategory(cat) {
+      appState.activeCategory = cat;
+      renderChips();
+      renderCatalog();
+    }
+
+    function renderFeatured() {
+      const featured = appState.products.filter(p => p.is_featured);
+      document.getElementById('featuredGrid').innerHTML = featured.map(p => buildProductHTML(p, 'feat')).join('');
+    }
+
+    function renderCatalog() {
+      let list = [...appState.products];
+      if (appState.activeCategory !== "Todos") {
+        list = list.filter(p => p.category === appState.activeCategory);
+      }
+      const sort = document.getElementById('sortSelect').value;
+      if (sort === "asc" || sort === "desc") {
+        list.sort((a, b) => {
+          const pA = Object.values(a.price)[0] || 0;
+          const pB = Object.values(b.price)[0] || 0;
+          return sort === "asc" ? pA - pB : pB - pA;
+        });
+      }
+      document.getElementById('catalogGrid').innerHTML = list.map(p => buildProductHTML(p, 'cat')).join('');
+    }
+
+    function buildProductHTML(p, view) {
+      const badge = p.badge ? `<div class="badge-best">${p.badge}</div>` : '';
+      const img = p.image_url ? `<img src="${p.image_url}" alt="${p.name}">` : `<div style="height:100%; display:flex; align-items:center; justify-content:center; background:var(--beige); color:#888; font-size:0.8rem;">Mak Empanadas</div>`;
+      const suf = `${view}_${p.id}`;
+
+      // LÓGICA DE CONTROL OBLIGATORIO DE EMPANADAS FRITAS (BOTONES INTERNOS DE RELLENO Y CANTIDAD)
+      if (p.is_special) {
+        return `
+          <div class="product-card" id="card_${suf}">
+            ${badge}
+            <div class="img-wrapper">${img}</div>
+            <div class="card-info">
+              <h3>${p.name}</h3>
+              <div class="special-box">
+                <span class="special-title">Selecciona Relleno *</span>
+                <div class="radio-group">
+                  <label><input type="radio" name="rel_${suf}" value="Carne" checked> Carne</label>
+                  <label><input type="radio" name="rel_${suf}" value="Queso"> Queso</label>
+                  <label><input type="radio" name="rel_${suf}" value="Mechada Queso"> Mechada Queso</label>
+                  <label><input type="radio" name="rel_${suf}" value="Napolitana"> Napolitana</label>
+                  <label><input type="radio" name="rel_${suf}" value="Jamón Queso"> Jamón Queso</label>
+                  <label><input type="radio" name="rel_${suf}" value="Camarón Queso" onchange="updateSpecialPrice('${p.id}','${suf}')"> Camarón Queso</label>
+                </div>
+                <span class="special-title">Selecciona Cantidad *</span>
+                <div class="radio-group">
+                  <label><input type="radio" name="qty_${suf}" value="25 congeladas" checked onchange="updateSpecialPrice('${p.id}','${suf}')"> 25 congeladas</label>
+                  <label><input type="radio" name="qty_${suf}" value="50 unidades" onchange="updateSpecialPrice('${p.id}','${suf}')"> 50 unidades</label>
+                  <label><input type="radio" name="qty_${suf}" value="100 unidades" onchange="updateSpecialPrice('${p.id}','${suf}')"> 100 unidades</label>
+                </div>
+              </div>
+              <div class="action-row">
+                <span class="price-display" id="pr_${suf}">$9.000</span>
+                <button class="btn-add-cart" onclick="addSpecialToCart('${p.id}','${suf}')">Agregar al carrito</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // VISTA DE PRODUCTOS ESTÁNDAR
+      const formats = Object.keys(p.price);
+      let selector = '';
+      if (formats.length > 1) {
+        selector = `
+          <div class="format-selector">
+            <label>Formato / Opciones</label>
+            <select id="sel_${suf}" onchange="document.getElementById('pr_${suf}').textContent = '$'+Number(this.value).toLocaleString('es-CL')">
+              ${formats.map(f => `<option value="${p.price[f]}" data-f="${f}">${f} — $${Number(p.price[f]).toLocaleString('es-CL')}</option>`).join('')}
+            </select>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="product-card">
+          ${badge}
+          <div class="img-wrapper">${img}</div>
+          <div class="card-info">
+            <h3>${p.name}</h3>
+            ${selector}
+            <div class="action-row">
+              <span class="price-display" id="pr_${suf}">$${Number(p.price[formats[0]]).toLocaleString('es-CL')}</span>
+              <div class="qty-counter">
+                <button onclick="changeCounter('${suf}', -1)">-</button>
+                <span id="cnt_${suf}">1</span>
+                <button onclick="changeCounter('${suf}', 1)">+</button>
+              </div>
+              <button class="btn-add-cart" onclick="addStandardToCart('${p.id}','${suf}')">Agregar al carrito</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function changeCounter(suf, val) {
+      const el = document.getElementById(`cnt_${suf}`);
+      let current = parseInt(el.textContent) + val;
+      if (current < 1) current = 1;
+      el.textContent = current;
+    }
+
+    function updateSpecialPrice(id, suf) {
+      const p = appState.products.find(item => item.id === id);
+      const isCamaron = document.querySelector(`input[name="rel_${suf}"]:checked`).value === "Camarón Queso";
+      const format = document.querySelector(`input[name="qty_${suf}"]:checked`).value;
+      
+      let finalPrice = 9000;
+      if (format === "50 unidades") finalPrice = isCamaron ? p.price.50_camaron : p.price.50_unidades;
+      if (format === "100 unidades") finalPrice = isCamaron ? p.price.100_camaron : p.price.100_unidades;
+
+      document.getElementById(`pr_${suf}`).textContent = `$${finalPrice.toLocaleString('es-CL')}`;
+    }
+
+    function addStandardToCart(id, suf) {
+      const p = appState.products.find(item => item.id === id);
+      const qty = parseInt(document.getElementById(`cnt_${suf}`).textContent);
+      
+      let format = Object.keys(p.price)[0];
+      let price = p.price[format];
+
+      const sel = document.getElementById(`sel_${suf}`);
+      if (sel) {
+        price = parseFloat(sel.value);
+        format = sel.options[sel.selectedIndex].getAttribute('data-f');
+      }
+
+      const cartKey = `${id}_${format}`;
+      const match = appState.cart.find(c => c.cartKey === cartKey);
+      if (match) match.qty += qty;
+      else appState.cart.push({ cartKey, id, name: p.name, format: format.includes("unidades") ? format : `${format} unidades`, price, qty });
+
+      document.getElementById(`cnt_${suf}`).textContent = "1";
+      updateCartBadge();
+    }
+
+    function addSpecialToCart(id, suf) {
+      const p = appState.products.find(item => item.id === id);
+      const relleno = document.querySelector(`input[name="rel_${suf}"]:checked`).value;
+      const format = document.querySelector(`input[name="qty_${suf}"]:checked`).value;
+      
+      const isCamaron = relleno === "Camarón Queso";
+      let price = 9000;
+      if (format === "50 unidades") price = isCamaron ? p.price.50_camaron : p.price.50_unidades;
+      if (format === "100 unidades") price = isCamaron ? p.price.100_camaron : p.price.100_unidades;
+
+      const formatLabel = `${format} (${relleno})`;
+      const cartKey = `${id}_${formatLabel}`;
+
+      const match = appState.cart.find(c => c.cartKey === cartKey);
+      if (match) match.qty += 1;
+      else appState.cart.push({ cartKey, id, name: p.name, format: formatLabel, price, qty: 1 });
+
+      updateCartBadge();
+    }
+
+    function updateCartBadge() {
+      document.getElementById('cartBadge').textContent = appState.cart.reduce((s, i) => s + i.qty, 0);
+    }
+
+    function toggleCartPanel(open) {
+      document.getElementById('panelOverlay').classList.toggle('active', open);
+      if (open) renderCartItems();
+    }
+
+    function renderCartItems() {
+      const container = document.getElementById('cartItemsContainer');
+      const checkoutBlock = document.getElementById('checkoutBlock');
+      const summaryBlock = document.getElementById('summaryBlock');
+      const footer = document.getElementById('panelFooterBlock');
+
+      if (appState.cart.length === 0) {
+        container.innerHTML = `<p style="text-align:center; color:#888; padding:20px 0;">Tu carrito está vacío.</p>`;
+        checkoutBlock.style.display = "none";
+        summaryBlock.style.display = "none";
+        footer.innerHTML = `<button class="btn-premium" style="width:100%" onclick="toggleCartPanel(false)">Ver catálogo</button>`;
+        return;
+      }
+
+      container.innerHTML = appState.cart.map(i => `
+        <div class="cart-item">
+          <div>
+            <strong>${i.name}</strong>
+            <div style="color:#777; font-size:0.75rem;">${i.format} x ${i.qty}</div>
+            <button class="cart-item-remove" onclick="removeCartItem('${i.cartKey}')">Quitar</button>
+          </div>
+          <strong>$${(i.price * i.qty).toLocaleString('es-CL')}</strong>
+        </div>
+      `).join('');
+
+      checkoutBlock.style.display = "block";
+      summaryBlock.style.display = "block";
+      footer.innerHTML = `<button class="btn-premium" style="width:100%; background:#25D366;" onclick="executeCheckoutProcess()">Finalizar Pedido</button>`;
+      recalculateTotals();
+    }
+
+    function removeCartItem(key) {
+      appState.cart = appState.cart.filter(c => c.cartKey !== key);
+      updateCartBadge();
+      renderCartItems();
+    }
+
+    function recalculateTotals() {
+      const subtotal = appState.cart.reduce((s, i) => s + (i.price * i.qty), 0);
+      const method = document.getElementById('chkMethod').value;
+      let delivery = 0;
+
+      if (method === "delivery_urban") { delivery = 4000; document.getElementById('addressGroup').style.display = "block"; }
+      else if (method === "delivery_rural") { delivery = 5000; document.getElementById('addressGroup').style.display = "block"; }
+      else { document.getElementById('addressGroup').style.display = "none"; }
+
+      document.getElementById('sumSubtotal').textContent = `$${subtotal.toLocaleString('es-CL')}`;
+      document.getElementById('sumDelivery').textContent = `$${delivery.toLocaleString('es-CL')}`;
+      document.getElementById('sumTotal').textContent = `$${(subtotal + delivery).toLocaleString('es-CL')}`;
+    }
+
+    function validateDeliveryDate(input) {
+      if (appState.config.clausuredDates.includes(input.value)) {
+        alert("Lo sentimos, esta fecha se encuentra clausurada por límite de cupos en el local.");
+        input.value = "";
+      }
+    }
+
+    // FLUJO AUTOMÁTICO COMPLETO: SUPABASE + EMAIL AUTOMÁTICO SIN INTERRUPCIÓN + WHATSAPP
+    async function executeCheckoutProcess() {
+      const name = document.getElementById('chkName').value.trim();
+      const phone = document.getElementById('chkPhone').value.trim();
+      const method = document.getElementById('chkMethod').value;
+      const address = document.getElementById('chkAddress').value.trim();
+      const date = document.getElementById('chkDate').value;
+      const time = document.getElementById('chkTime').value;
+      const obs = document.getElementById('chkObservations').value.trim();
+
+      if (!name || !phone || !date || !time) {
+        alert("Por favor rellene todos los campos obligatorios marcados con (*)");
+        return;
+      }
+      if ((method === "delivery_urban" || method === "delivery_rural") && !address) {
+        alert("La dirección es estrictamente requerida para despachos.");
+        return;
+      }
+
+      const subtotal = appState.cart.reduce((s, i) => s + (i.price * i.qty), 0);
+      let delivery = 0;
+      let methodText = "Retiro en domicilio: Gratis";
+      if (method === "delivery_urban") { delivery = 4000; methodText = "Delivery Punta Arenas ($4.000)"; }
+      if (method === "delivery_rural") { delivery = 5000; methodText = "Delivery fuera del radio urbano ($5.000)"; }
+      const total = subtotal + delivery;
+
+      // Desglose de productos estructurado idénticamente para email y para whatsapp
+      const itemsLines = appState.cart.map(i => `• ${i.name} [${i.format}] x${i.qty} — $${(i.price * i.qty).toLocaleString('es-CL')}`).join('\n');
+
+      // 1. Guardar permanentemente en Supabase Database
+      if (supabaseClient) {
+        try {
+          await supabaseClient.from('orders').insert([{
+            client_name: name, phone, delivery_method: methodText, address: address || null,
+            delivery_date: date, delivery_time: time, observations: obs || null,
+            items: appState.cart, subtotal, delivery_cost: delivery, total
+          }]);
+        } catch (err) { console.error("Error al registrar pedido en Supabase:", err); }
+      }
+
+      // 2. Envío automatizado de correo electrónico de respaldo al local via EmailJS
+      if (window.emailjs && EMAILJS_PUBLIC_KEY !== "YOUR_EMAILJS_PUBLIC_KEY") {
+        const emailParams = {
+          client_name: name,
+          phone: phone,
+          delivery_method: methodText,
+          address: address || "Retiro en Domicilio",
+          delivery_date: date,
+          delivery_time: time,
+          items_details: itemsLines,
+          observations: obs || "Ninguna",
+          subtotal: `$${subtotal.toLocaleString('es-CL')}`,
+          delivery_cost: `$${delivery.toLocaleString('es-CL')}`,
+          total: `$${total.toLocaleString('es-CL')}`
+        };
+
+        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams)
+          .then(() => console.log("Confirmación automática enviada exitosamente por email."))
+          .catch(e => console.error("Error en el envío automatizado de EmailJS:", e));
+      }
+
+      // 3. Formato del mensaje estructurado para WhatsApp
+      const wsMessage = `Hola Mak Empanadas! Quiero agendar mi pedido:\n\n` +
+                        `*Nombre:* ${name}\n` +
+                        `*Teléfono:* ${phone}\n` +
+                        `*Dirección:* ${address || 'Retiro en domicilio'}\n` +
+                        `*Fecha:* ${date}\n` +
+                        `*Hora:* ${time}\n\n` +
+                        `*Productos:*\n${itemsLines}\n\n` +
+                        `*Observaciones:* ${obs || 'Ninguna'}\n\n` +
+                        `*Subtotal:* $${subtotal.toLocaleString('es-CL')}\n` +
+                        `*Delivery:* $${delivery.toLocaleString('es-CL')}\n` +
+                        `*Total:* $${total.toLocaleString('es-CL')}`;
+
+      appState.cart = [];
+      updateCartBadge();
+      toggleCartPanel(false);
+
+      window.open(`https://wa.me/56989653397?text=${encodeURIComponent(wsMessage)}`, '_blank');
+    }
+
+    /* --- MÓDULO INTERNO DEL ADMINISTRADOR AVANZADO --- */
+    function handleAdminAccess() {
+      if (prompt("Contraseña del Administrador:") === "010752am") {
+        document.getElementById('clientView').style.display = "none";
+        document.getElementById('adminView').style.display = "block";
+        loadAdminPanelFields();
+      } else {
+        alert("Código incorrecto.");
+      }
+    }
+
+    function exitAdminMode() {
+      document.getElementById('adminView').style.display = "none";
+      document.getElementById('clientView').style.display = "block";
+      if (supabaseClient) syncDataWithSupabase().then(() => renderClientDOM());
+    }
+
+    function loadAdminPanelFields() {
+      document.getElementById('admLogoUrl').value = appState.config.logoUrl || "";
+      document.getElementById('admStoreName').value = appState.config.storeName;
+      document.getElementById('admHeroTitle').value = appState.config.heroTitle;
+      document.getElementById('admHeroSub').value = appState.config.heroSub;
+      renderAdminDates();
+      renderAdminProducts();
+      setupPriceInputsBasedOnCategory();
+    }
+
+    async function updateIdentityTexts() {
+      appState.config.logoUrl = document.getElementById('admLogoUrl').value.trim();
+      appState.config.storeName = document.getElementById('admStoreName').value.trim();
+      appState.config.heroTitle = document.getElementById('admHeroTitle').value.trim();
+      appState.config.heroSub = document.getElementById('admHeroSub').value.trim();
+
+      if (supabaseClient) {
+        await supabaseClient.from('site_config').update({ data: appState.config }).eq('id', 'global');
+      }
+      alert("Identidad visual y textos modificados permanentemente en Supabase.");
+    }
+
+    function renderAdminDates() {
+      document.getElementById('clausuredDatesContainer').innerHTML = appState.config.clausuredDates.map(d => `
+        <div class="closed-date-tag">${d} <span style="cursor:pointer; font-weight:700; margin-left:5px;" onclick="removeDateBlock('${d}')">×</span></div>
+      `).join('');
+    }
+
+    async function addClausuredDate() {
+      const val = document.getElementById('admBlockDate').value;
+      if (val && !appState.config.clausuredDates.includes(val)) {
+        appState.config.clausuredDates.push(val);
+        if (supabaseClient) await supabaseClient.from('site_config').update({ data: appState.config }).eq('id', 'global');
+        renderAdminDates();
+        document.getElementById('admBlockDate').value = "";
+      }
+    }
+
+    async function removeDateBlock(d) {
+      appState.config.clausuredDates = appState.config.clausuredDates.filter(item => item !== d);
+      if (supabaseClient) await supabaseClient.from('site_config').update({ data: appState.config }).eq('id', 'global');
+      renderAdminDates();
+    }
+
+    function setupPriceInputsBasedOnCategory() {
+      const cat = document.getElementById('formProdCategory').value;
+      const container = document.getElementById('priceInputsContainer');
+      container.innerHTML = "";
+
+      if (cat === "Empanadas") {
+        document.getElementById('btnAddPriceRow').style.display = "none";
+        addPriceInputRow("25 congeladas", "25_congeladas", true);
+        addPriceInputRow("50 unidades tradicionales", "50_unidades", true);
+        addPriceInputRow("100 unidades tradicionales", "100_unidades", true);
+        addPriceInputRow("50 empanadas camarón queso", "50_camaron", true);
+        addPriceInputRow("100 empanadas camarón queso", "100_camaron", true);
+      } else {
+        document.getElementById('btnAddPriceRow').style.display = "inline-block";
+        addPriceInputRow("Formato (Ej: 25 unidades o Base)", "Base");
+      }
+    }
+
+    function addPriceInputRow(label, key, disabled = false) {
+      const container = document.getElementById('priceInputsContainer');
+      const div = document.createElement('div');
+      div.className = "price-row-item";
+      div.style.display = "flex"; div.style.gap = "8px";
+      div.innerHTML = `
+        <input type="text" class="p-key" placeholder="Ej. 25" value="${key || label}" ${disabled ? 'readonly' : ''} style="flex:1; padding:5px; border-radius:4px; border:1px solid #ccc;">
+        <input type="number" class="p-val" placeholder="Precio $" style="flex:1; padding:5px; border-radius:4px; border:1px solid #ccc;" required>
+        ${!disabled ? `<button type="button" onclick="this.parentElement.remove()" style="background:#FCA5A5; border:none; padding:0 10px; border-radius:4px; cursor:pointer;">×</button>` : ''}
+      `;
+      container.appendChild(div);
+    }
+
+    function renderAdminProducts() {
+      document.getElementById('adminProductsContainer').innerHTML = appState.products.map(p => `
+        <div class="admin-item-row">
+          <div><strong>${p.name}</strong> — Categoría: [${p.category}]</div>
+          <div style="display:flex; gap:8px;">
+            <button style="padding:4px 10px; background:#FDE68A; border:none; cursor:pointer; border-radius:4px;" onclick="editProductRow('${p.id}')">Editar</button>
+            <button style="padding:4px 10px; background:#FCA5A5; border:none; cursor:pointer; border-radius:4px;" onclick="deleteProductRow('${p.id}')">Eliminar</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function editProductRow(id) {
+      const p = appState.products.find(item => item.id === id);
+      if (!p) return;
+
+      document.getElementById('formProductTitle').textContent = "Modificando Producto Seleccionado";
+      document.getElementById('formProductId').value = p.id;
+      document.getElementById('formProdName').value = p.name;
+      document.getElementById('formProdCategory').value = p.category;
+      document.getElementById('formProdImgUrl').value = p.image_url || "";
+      document.getElementById('formProdFeatured').checked = p.is_featured;
+      document.getElementById('formProdBadge').checked = !!p.badge;
+
+      const container = document.getElementById('priceInputsContainer');
+      container.innerHTML = "";
+      setupPriceInputsBasedOnCategory();
+
+      const rows = container.querySelectorAll('.price-row-item');
+      Object.keys(p.price).forEach((key, idx) => {
+        if (p.category === "Empanadas") {
+          const matchingRow = Array.from(rows).find(r => r.querySelector('.p-key').value === key);
+          if (matchingRow) matchingRow.querySelector('.p-val').value = p.price[key];
+        } else {
+          if (idx === 0) {
+            rows[0].querySelector('.p-key').value = key;
+            rows[0].querySelector('.p-val').value = p.price[key];
+          } else {
+            addPriceInputRow("", key);
+            const currentRows = container.querySelectorAll('.price-row-item');
+            currentRows[currentRows.length - 1].querySelector('.p-val').value = p.price[key];
+          }
+        }
+      });
+    }
+
+    async function handleProductSubmission(e) {
+      e.preventDefault();
+      const id = document.getElementById('formProductId').value;
+      const name = document.getElementById('formProdName').value.trim().toUpperCase();
+      const category = document.getElementById('formProdCategory').value;
+      let image_url = document.getElementById('formProdImgUrl').value;
+      const is_featured = document.getElementById('formProdFeatured').checked;
+      const hasBadge = document.getElementById('formProdBadge').checked;
+
+      const price = {};
+      document.querySelectorAll('.price-row-item').forEach(r => {
+        const k = r.querySelector('.p-key').value.trim();
+        const v = parseFloat(r.querySelector('.p-val').value);
+        if (k && !isNaN(v)) price[k] = v;
+      });
+
+      const fileInput = document.getElementById('formProdFile');
+      if (fileInput.files.length > 0 && supabaseClient) {
+        const file = fileInput.files[0];
+        const path = `products/${Date.now()}_${file.name}`;
+        const { error: upErr } = await supabaseClient.storage.from('product-images').upload(path, file);
+        if (!upErr) {
+          const { data } = supabaseClient.storage.from('product-images').getPublicUrl(path);
+          image_url = data.publicUrl;
+        }
+      }
+
+      const payload = { name, category, price, image_url, is_special: (category === "Empanadas"), is_featured, badge: hasBadge ? "Más vendido" : null };
+
+      if (supabaseClient) {
+        if (id) await supabaseClient.from('products').update(payload).eq('id', id);
+        else await supabaseClient.from('products').insert([payload]);
+        await syncDataWithSupabase();
+      } else {
+        if (id) {
+          const idx = appState.products.findIndex(x => x.id === id);
+          if (idx !== -1) appState.products[idx] = { ...appState.products[idx], ...payload };
+        } else {
+          payload.id = Date.now().toString();
+          appState.products.push(payload);
+        }
+      }
+
+      clearProductForm();
+      renderAdminProducts();
+      alert("Cambios impactados y resguardados con éxito en la base de datos.");
+    }
+
+    async function deleteProductRow(id) {
+      if (confirm("¿Estás completamente seguro de eliminar este artículo del catálogo?")) {
+        if (supabaseClient) {
+          await supabaseClient.from('products').delete().eq('id', id);
+          await syncDataWithSupabase();
+        } else {
+          appState.products = appState.products.filter(p => p.id !== id);
+        }
+        renderAdminProducts();
+      }
+    }
+
+    function clearProductForm() {
+      document.getElementById('formProductTitle').textContent = "Añadir o Editar Producto en el Catálogo";
+      document.getElementById('formProductId').value = "";
+      document.getElementById('productForm').reset();
+      document.getElementById('formProdImgUrl').value = "";
+      setupPriceInputsBasedOnCategory();
+    }
+  </script>
+</body>
+</html>
