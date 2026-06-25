@@ -59,14 +59,27 @@
     .nav-wrapper { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; max-width: 1200px; margin: 0 auto; }
     
     .logo-area { display: flex; align-items: center; gap: 12px; }
-    .admin-trigger { font-size: 1.5rem; cursor: pointer; user-select: none; transition: var(--transition); }
-    .admin-trigger:hover { transform: scale(1.2); }
+    .admin-trigger { font-size: 1.5rem; cursor: pointer; user-select: none; }
     .brand-logo-img { height: 45px; width: 45px; object-fit: cover; border-radius: 50%; display: none; border: 1px solid var(--rose-gold); }
     .brand-text h1 { font-size: 1.5rem; color: var(--rose-gold-dark); font-weight: 800; }
     
-    nav ul { display: flex; list-style: none; gap: 20px; }
+    nav ul { display: flex; list-style: none; gap: 20px; align-items: center; }
     nav ul a { text-decoration: none; color: var(--text-dark); font-size: 0.9rem; font-weight: 500; transition: var(--transition); }
     nav ul a:hover { color: var(--rose-gold); }
+
+    /* Botón Admin Directo */
+    .btn-direct-admin {
+      background: #D9A05B;
+      color: white !important;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem !important;
+      font-weight: 600 !important;
+      border: none;
+      cursor: pointer;
+      display: inline-block;
+    }
+    .btn-direct-admin:hover { background: #b07d43; }
 
     /* Hero */
     .hero-sec { background: linear-gradient(135deg, var(--beige) 0%, var(--rosado-pastel) 100%); padding: 90px 0 70px; text-align: center; }
@@ -191,7 +204,7 @@
     <header>
       <div class="nav-wrapper">
         <div class="logo-area">
-          <div class="admin-trigger" ondblclick="handleAdminAccess()" title="Doble clic para entrar al Panel">🥟</div>
+          <div class="admin-trigger">🥟</div>
           <img src="" id="uiBrandLogo" class="brand-logo-img" alt="Logo">
           <div class="brand-text">
             <h1 id="uiStoreName">Mak Empanadas</h1>
@@ -202,8 +215,8 @@
             <li><a href="#inicio">Inicio</a></li>
             <li><a href="#catalogo">Catálogo</a></li>
             <li><a href="#nosotros">Nosotros</a></li>
-            <li><a href="#contacto">Contacto</a></li>
             <li><a href="javascript:void(0)" onclick="toggleCartPanel(true)">Carrito</a></li>
+            <li><button class="btn-direct-admin" onclick="handleAdminAccess()">⚙️ Panel Admin</button></li>
           </ul>
         </nav>
       </div>
@@ -272,10 +285,6 @@
         <h4 id="uiFooterName">Mak Empanadas</h4>
         <p>Elaborando productos caseros con más de 3 años de experiencia.</p>
         <p style="margin-top: 15px; font-weight: 500; color: var(--rose-gold);">Punta Arenas, Chile</p>
-        
-        <button onclick="handleAdminAccess()" style="margin-top: 25px; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.5); padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;">
-          🔐 Entrar al Panel de Control (Administrador)
-        </button>
       </div>
     </footer>
 
@@ -420,7 +429,6 @@
           <div class="input-group">
             <label>URL de la Imagen del Producto (Pon un enlace o súbela)</label>
             <input type="text" id="formProdImgUrl" placeholder="https://ejemplo.com/imagen.jpg">
-            <input type="file" id="formProdFile" accept="image/*" style="margin-top:8px;">
           </div>
 
           <div style="display:flex; gap:20px; margin: 15px 0; font-size: 0.85rem; background: #FFF5F5; padding: 10px; border-radius: 6px;">
@@ -439,21 +447,12 @@
   </div>
 
   <script>
-    // Configuración de las APIs. Si están vacías, corre de manera Local de inmediato.
+    // Configuración local automática al estar vacías las URL
     const SUPABASE_URL = ""; 
     const SUPABASE_ANON_KEY = "";
     
-    const EMAILJS_PUBLIC_KEY = "YOUR_EMAILJS_PUBLIC_KEY";
-    const EMAILJS_SERVICE_ID = "YOUR_EMAILJS_SERVICE_ID";
-    const EMAILJS_TEMPLATE_ID = "YOUR_EMAILJS_TEMPLATE_ID";
-
-    // Detecta si hay credenciales reales para iniciar Supabase
     const useSupabase = (SUPABASE_URL !== "" && SUPABASE_ANON_KEY !== "");
     const supabaseClient = useSupabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
-
-    if(window.emailjs && EMAILJS_PUBLIC_KEY !== "YOUR_EMAILJS_PUBLIC_KEY") {
-      emailjs.init(EMAILJS_PUBLIC_KEY);
-    }
 
     let appState = {
       config: {
@@ -481,7 +480,6 @@
       document.getElementById('chkDate').min = today;
       document.getElementById('admBlockDate').min = today;
 
-      // Cargar desde LocalStorage si no se usa base de datos remota
       if (!useSupabase) {
         const savedConfig = localStorage.getItem('mak_config');
         const savedProducts = localStorage.getItem('mak_products');
@@ -765,14 +763,12 @@
 
       const subtotal = appState.cart.reduce((s, i) => s + (i.price * i.qty), 0);
       let delivery = 0;
-      let methodText = "Retiro en domicilio";
-      if (method === "delivery_urban") { delivery = 4000; methodText = "Delivery Punta Arenas"; }
-      if (method === "delivery_rural") { delivery = 5000; methodText = "Delivery rural"; }
+      if (method === "delivery_urban") { delivery = 4000; }
+      if (method === "delivery_rural") { delivery = 5000; }
       const total = subtotal + delivery;
 
       const itemsLines = appState.cart.map(i => `• ${i.name} [${i.format}] x${i.qty} — $${(i.price * i.qty).toLocaleString('es-CL')}`).join('\n');
 
-      // WhatsApp format
       const wsMessage = `Hola Mak Empanadas! Quiero agendar mi pedido:\n\n` +
                         `*Nombre:* ${name}\n` +
                         `*Teléfono:* ${phone}\n` +
@@ -791,7 +787,7 @@
       window.open(`https://wa.me/56989653397?text=${encodeURIComponent(wsMessage)}`, '_blank');
     }
 
-    /* --- CODIGO DEL ADMINISTRADOR --- */
+    /* --- GESTIÓN ADMINISTRADOR --- */
     function handleAdminAccess() {
       if (prompt("Contraseña del Administrador:") === "010752am") {
         document.getElementById('clientView').style.display = "none";
