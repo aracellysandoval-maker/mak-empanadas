@@ -59,27 +59,15 @@
     .nav-wrapper { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; max-width: 1200px; margin: 0 auto; }
     
     .logo-area { display: flex; align-items: center; gap: 12px; }
-    .admin-trigger { font-size: 1.5rem; cursor: pointer; user-select: none; }
+    /* Estilo para la empanada interactiva */
+    .admin-trigger { font-size: 1.8rem; cursor: pointer; user-select: none; transition: transform 0.2s; }
+    .admin-trigger:active { transform: scale(0.9); }
     .brand-logo-img { height: 45px; width: 45px; object-fit: cover; border-radius: 50%; display: none; border: 1px solid var(--rose-gold); }
     .brand-text h1 { font-size: 1.5rem; color: var(--rose-gold-dark); font-weight: 800; }
     
     nav ul { display: flex; list-style: none; gap: 20px; align-items: center; }
     nav ul a { text-decoration: none; color: var(--text-dark); font-size: 0.9rem; font-weight: 500; transition: var(--transition); }
     nav ul a:hover { color: var(--rose-gold); }
-
-    /* Botón Admin Directo */
-    .btn-direct-admin {
-      background: #D9A05B;
-      color: white !important;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 0.8rem !important;
-      font-weight: 600 !important;
-      border: none;
-      cursor: pointer;
-      display: inline-block;
-    }
-    .btn-direct-admin:hover { background: #b07d43; }
 
     /* Hero */
     .hero-sec { background: linear-gradient(135deg, var(--beige) 0%, var(--rosado-pastel) 100%); padding: 90px 0 70px; text-align: center; }
@@ -148,6 +136,7 @@
     /* Footer */
     footer { background: var(--text-dark); color: rgba(255,255,255,0.7); padding: 35px 0; text-align: center; font-size: 0.85rem; border-top: 3px solid var(--rose-gold); }
     footer h4 { color: var(--white); margin-bottom: 8px; font-size: 1.1rem; }
+    .secret-footer-btn { background: none; border: none; color: #555; font-size: 0.75rem; cursor: pointer; margin-top: 15px; text-decoration: underline; }
 
     /* Elementos flotantes */
     .btn-float-wa { position: fixed; bottom: 25px; left: 25px; background-color: #25D366; color: white; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 99; text-decoration: none; }
@@ -204,7 +193,7 @@
     <header>
       <div class="nav-wrapper">
         <div class="logo-area">
-          <div class="admin-trigger">🥟</div>
+          <div class="admin-trigger" ondblclick="handleAdminAccess()">🥟</div>
           <img src="" id="uiBrandLogo" class="brand-logo-img" alt="Logo">
           <div class="brand-text">
             <h1 id="uiStoreName">Mak Empanadas</h1>
@@ -215,8 +204,8 @@
             <li><a href="#inicio">Inicio</a></li>
             <li><a href="#catalogo">Catálogo</a></li>
             <li><a href="#nosotros">Nosotros</a></li>
+            <li><a href="#contacto">Contacto</a></li>
             <li><a href="javascript:void(0)" onclick="toggleCartPanel(true)">Carrito</a></li>
-            <li><button class="btn-direct-admin" onclick="handleAdminAccess()">⚙️ Panel Admin</button></li>
           </ul>
         </nav>
       </div>
@@ -236,7 +225,7 @@
       <div class="benefits-grid">
         <div class="benefit-card">✓ Más de 3 años de experiencia</div>
         <div class="benefit-card">✓ Elaboración artesanal</div>
-        <div class="benefit-card">✓ Ingredientes frescos</div>
+        <div class="benefit-card">✓ Ingredients frescos</div>
         <div class="benefit-card">✓ Pedidos programados</div>
         <div class="benefit-card">✓ Delivery en Punta Arenas</div>
         <div class="benefit-card">✓ Opciones vegetarianas</div>
@@ -285,6 +274,9 @@
         <h4 id="uiFooterName">Mak Empanadas</h4>
         <p>Elaborando productos caseros con más de 3 años de experiencia.</p>
         <p style="margin-top: 15px; font-weight: 500; color: var(--rose-gold);">Punta Arenas, Chile</p>
+        
+        <br>
+        <button class="secret-footer-btn" onclick="handleAdminAccess()">⚙️ Abrir panel de control</button>
       </div>
     </footer>
 
@@ -358,7 +350,7 @@
 
   <div id="adminView">
     <div class="admin-nav">
-      <h2>🥟 Panel de Administración Mak Empanadas</h2>
+      <h2>Panel de Administración Mak Empanadas</h2>
       <button class="btn-premium" style="background:#4B5563;" onclick="exitAdminMode()">Volver a la Tienda</button>
     </div>
 
@@ -447,7 +439,6 @@
   </div>
 
   <script>
-    // Configuración local automática al estar vacías las URL
     const SUPABASE_URL = ""; 
     const SUPABASE_ANON_KEY = "";
     
@@ -477,8 +468,8 @@
 
     window.addEventListener('DOMContentLoaded', async () => {
       const today = new Date().toISOString().split('T')[0];
-      document.getElementById('chkDate').min = today;
-      document.getElementById('admBlockDate').min = today;
+      if(document.getElementById('chkDate')) document.getElementById('chkDate').min = today;
+      if(document.getElementById('admBlockDate')) document.getElementById('admBlockDate').min = today;
 
       if (!useSupabase) {
         const savedConfig = localStorage.getItem('mak_config');
@@ -633,8 +624,8 @@
       const format = document.querySelector(`input[name="qty_${suf}"]:checked`).value;
       
       let finalPrice = 9000;
-      if (format === "50 unidades") finalPrice = isCamaron ? p.price.50_camaron : p.price.50_unidades;
-      if (format === "100 unidades") finalPrice = isCamaron ? p.price.100_camaron : p.price.100_unidades;
+      if (format === "50 unidades") finalPrice = isCamaron ? p.price["50_camaron"] : p.price["50_unidades"];
+      if (format === "100 unidades") finalPrice = isCamaron ? p.price["100_camaron"] : p.price["100_unidades"];
 
       document.getElementById(`pr_${suf}`).textContent = `$${finalPrice.toLocaleString('es-CL')}`;
     }
@@ -667,8 +658,8 @@
       const isCamaron = relleno === "Camarón Queso";
       
       let price = 9000;
-      if (format === "50 unidades") price = isCamaron ? p.price.50_camaron : p.price.50_unidades;
-      if (format === "100 unidades") price = isCamaron ? p.price.100_camaron : p.price.100_unidades;
+      if (format === "50 unidades") price = isCamaron ? p.price["50_camaron"] : p.price["50_unidades"];
+      if (format === "100 unidades") price = isCamaron ? p.price["100_camaron"] : p.price["100_unidades"];
 
       const formatLabel = `${format} (${relleno})`;
       const cartKey = `${id}_${formatLabel}`;
@@ -754,7 +745,6 @@
       const address = document.getElementById('chkAddress').value.trim();
       const date = document.getElementById('chkDate').value;
       const time = document.getElementById('chkTime').value;
-      const obs = document.getElementById('chkObservations').value.trim();
 
       if (!name || !phone || !date || !time) {
         alert("Por favor rellene todos los campos obligatorios (*)");
