@@ -52,8 +52,16 @@
     .nav-wrapper { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; max-width: 1200px; margin: 0 auto; }
     
     .logo-area { display: flex; align-items: center; gap: 12px; }
-    /* La empanada secreta con doble clic */
-    .admin-trigger { font-size: 1.9rem; cursor: pointer; user-select: none; transition: transform 0.2s; }
+    
+    /* La empanada secreta interactiva */
+    .admin-trigger { 
+      font-size: 1.9rem; 
+      cursor: pointer; 
+      user-select: none; 
+      transition: transform 0.2s; 
+      -webkit-user-select: none; 
+      -webkit-touch-callout: none;
+    }
     .admin-trigger:active { transform: scale(0.85); }
     
     .brand-logo-img { height: 45px; width: 45px; object-fit: cover; border-radius: 50%; display: none; }
@@ -134,7 +142,7 @@
     <header>
       <div class="nav-wrapper">
         <div class="logo-area">
-          <div class="admin-trigger" ondblclick="openAdminPanel()">🥟</div>
+          <div class="admin-trigger" id="empanadaBtn" ondblclick="openAdminPanel()">🥟</div>
           <img src="" id="uiLogo" class="brand-logo-img" alt="Logo">
           <h1 id="uiStoreName">Mak Empanadas</h1>
         </div>
@@ -142,7 +150,6 @@
           <ul>
             <li><a href="#inicio">Inicio</a></li>
             <li><a href="#catalogo">Catálogo</a></li>
-            <li><a href="#contacto">Contacto</a></li>
           </ul>
         </nav>
       </div>
@@ -249,10 +256,7 @@
   </div>
 
   <script>
-    // ================================================================
-    // IMPORTANTE: SI CONECTAS TU SUPABASE, COLOCA TUS DATOS AQUÍ ABAJO.
-    // SI LO DEJAS VACÍO, EL PANEL USARÁ LA MEMORIA LOCAL (LOCALSTORAGE).
-    // ================================================================
+    // Configuración de almacenamiento
     const SUPABASE_URL = ""; 
     const SUPABASE_ANON_KEY = "";
     
@@ -275,7 +279,22 @@
     window.addEventListener('DOMContentLoaded', async () => {
       await loadAllData();
       renderClientView();
+      setupEmpanadaTouchEvents();
     });
+
+    // Detectar clic largo en la empanada para celulares
+    function setupEmpanadaTouchEvents() {
+      const empanada = document.getElementById('empanadaBtn');
+      let timer;
+      
+      empanada.addEventListener('touchstart', () => {
+        timer = setTimeout(openAdminPanel, 2000); // 2 segundos presionado abre el admin
+      });
+      
+      empanada.addEventListener('touchend', () => {
+        clearTimeout(timer);
+      });
+    }
 
     async function loadAllData() {
       if (isSupabaseConnected) {
@@ -284,7 +303,7 @@
           if (configRow) storeState.identity = configRow.data;
           let { data: prods } = await supabase.from('products').select('*');
           if (prods && prods.length > 0) storeState.products = prods;
-        } catch (e) { console.error("Error cargando de Supabase, usando locales.", e); }
+        } catch (e) { console.error(e); }
       } else {
         const localId = localStorage.getItem('mak_identity');
         const localProds = localStorage.getItem('mak_products');
@@ -294,7 +313,6 @@
     }
 
     function renderClientView() {
-      // Ajustar textos públicos
       document.getElementById('uiStoreName').textContent = storeState.identity.storeName;
       document.getElementById('uiFooterName').textContent = storeState.identity.storeName;
       document.getElementById('uiHeroTitle').textContent = storeState.identity.heroTitle;
@@ -304,7 +322,6 @@
       if (storeState.identity.logoUrl) { logo.src = storeState.identity.logoUrl; logo.style.display = "block"; }
       else { logo.style.display = "none"; }
 
-      // Categorías dinámicas
       const categories = ["Todos", ...new Set(storeState.products.map(p => p.category))];
       document.getElementById('uiCategoriesChips').innerHTML = categories.map(cat => `
         <button class="chip ${cat === 'Todos' ? 'active' : ''}" onclick="filterProducts('${cat}', this)">${cat}</button>
@@ -319,7 +336,6 @@
         const badgeHTML = p.badge ? `<div class="badge-best">${p.badge}</div>` : '';
         const imgHTML = p.image_url ? `<img src="${p.image_url}">` : `<div style="height:100%; background:#E8E8E4;"></div>`;
         
-        // Formatos/Botones dinámicos de precio
         const formats = Object.keys(p.price);
         let selectorHTML = '';
         if (formats.length > 1) {
@@ -347,7 +363,7 @@
                   <span>1</span>
                   <button onclick="adjustQty(this, 1)">+</button>
                 </div>
-                <button class="btn-add-cart" onclick="alert('Agregado de prueba')">Agregar</button>
+                <button class="btn-add-cart" onclick="alert('Agregado')">Agregar</button>
               </div>
             </div>
           </div>
@@ -373,7 +389,7 @@
       else renderProductsGrid(storeState.products.filter(p => p.category === cat));
     }
 
-    // ================= FUNCIONES ADMIN =================
+    // ================= ADMIN =================
     function openAdminPanel() {
       if (prompt("Contraseña de Acceso Admin:") === "010752am") {
         document.getElementById('clientView').style.display = "none";
@@ -395,7 +411,6 @@
       document.getElementById('admLogoUrl').value = storeState.identity.logoUrl;
       document.getElementById('admHeroTitle').value = storeState.identity.heroTitle;
       document.getElementById('admHeroSub').value = storeState.identity.heroSub;
-      
       resetForm();
       renderAdminProductsList();
     }
@@ -411,7 +426,7 @@
       } else {
         localStorage.setItem('mak_identity', JSON.stringify(storeState.identity));
       }
-      alert("¡Cambios de textos aplicados con éxito!");
+      alert("¡Textos actualizados!");
     }
 
     function addPriceRow(formatName, priceValue) {
@@ -465,7 +480,6 @@
       const is_featured = document.getElementById('formFeatured').checked;
       const badge = document.getElementById('formBadge').checked ? "Más vendido" : null;
 
-      // Armar JSON de precios dinámicos
       const price = {};
       document.querySelectorAll('.price-builder-row').forEach(row => {
         const fName = row.querySelector('.p-name').value;
@@ -474,8 +488,8 @@
       });
 
       const productPayload = { id, name, category, image_url, is_featured, badge, price };
-
       const existingIndex = storeState.products.findIndex(x => x.id === id);
+      
       if (existingIndex > -1) storeState.products[existingIndex] = productPayload;
       else storeState.products.push(productPayload);
 
@@ -489,19 +503,16 @@
         localStorage.setItem('mak_products', JSON.stringify(storeState.products));
       }
 
-      alert("¡Producto guardado exitosamente!");
+      alert("¡Guardado!");
       resetForm();
       renderAdminProductsList();
     }
 
     async function deleteProduct(id) {
-      if (confirm("¿Estás segura de eliminar este producto?")) {
+      if (confirm("¿Eliminar este producto?")) {
         storeState.products = storeState.products.filter(x => x.id !== id);
-        if (isSupabaseConnected) {
-          await supabase.from('products').delete().eq('id', id);
-        } else {
-          localStorage.setItem('mak_products', JSON.stringify(storeState.products));
-        }
+        if (isSupabaseConnected) await supabase.from('products').delete().eq('id', id);
+        else localStorage.setItem('mak_products', JSON.stringify(storeState.products));
         renderAdminProductsList();
       }
     }
@@ -511,7 +522,7 @@
       document.getElementById('formId').value = "";
       document.getElementById('productForm').reset();
       document.getElementById('dynamicPriceContainer').innerHTML = "";
-      addPriceRow("Formato Normal", "10000"); // Una fila base por defecto
+      addPriceRow("Formato Normal", "10000");
     }
   </script>
 </body>
